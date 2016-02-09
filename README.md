@@ -1,17 +1,10 @@
-cookbook-alteryx-server Cookbook
+alteryx-server Cookbook
 ================================
-TODO: Enter the cookbook description here.
-
-e.g.
-This cookbook makes your favorite breakfast sandwich.
+This cookbook installs and (in the near future) will configure Alteryx server.
 
 Requirements
 ------------
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
-
-e.g.
-#### packages
-- `toaster` - cookbook-alteryx-server needs toaster to brown your bagel.
+- `windows` - alteryx-server depends on the windows cookbook and the Windows platform.
 
 Attributes
 ----------
@@ -50,6 +43,15 @@ Just include `cookbook-alteryx-server` in your node's `run_list`:
   ]
 }
 ```
+
+Resources
+---------
+
+alteryx_install
+Actions: `:install`, `:uninstall`
+
+Installs the latest version of Alteryx server. Defaults to `:install`.
+
 
 Contributing
 ------------

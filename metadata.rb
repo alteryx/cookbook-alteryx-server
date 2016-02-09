@@ -1,4 +1,4 @@
-name             'cookbook-alteryx-server'
+name             'alteryx-server'
 maintainer       'Alteryx, Inc.'
 maintainer_email ''
 license          'All rights reserved'
