@@ -51,7 +51,7 @@ Resources are the intended way to consume this cookbook, however we've provided 
 
 ### default
 
-The default recipe downloads and installs the latest version of Alteryx server.
+The default recipe downloads and installs Alteryx server.
 
 Resources
 ---------
@@ -59,7 +59,24 @@ Resources
 ### alteryx_install
 Actions: `:install`
 
-Installs the latest version of Alteryx server.
+Installs Alteryx server.
+
+#### Attributes
+|Name  |Type  |Description|
+|------|------|-----------|
+|source|String|Local path or URL|
+
+Examples:
+
+```
+alteryx_install 'Alteryx server'
+```
+
+```
+alteryx_install 'Alteryx server' do
+  source 'http://downloads.alteryx.com/Alteryx10.1.7.11834/AlteryxServerInstallx64_10.1.7.11834.exe'
+end
+```
 
 <!--
 License and Authors

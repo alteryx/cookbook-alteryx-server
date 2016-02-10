@@ -8,7 +8,7 @@ class Chef
       actions(:install)
       default_action :install
 
-      attribute(:source, kind_of: String, default: nil)
+      attribute(:source, kind_of: String, default: 'http://downloads.alteryx.com/Alteryx10.1.7.12188/AlteryxServerInstallx64_10.1.7.12188.exe')
     end
   end
 end
