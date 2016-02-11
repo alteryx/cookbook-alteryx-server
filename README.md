@@ -4,7 +4,7 @@ This cookbook installs and (in the near future) will configure Alteryx server.
 
 Requirements
 ------------
-- `windows` - alteryx-server depends on the windows cookbook and the Windows platform.
+- `windows` - alteryx-server only supports the Windows platform.
 
 <!--
 Attributes
