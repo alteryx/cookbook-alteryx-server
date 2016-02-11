@@ -5,6 +5,7 @@ This cookbook installs and (in the near future) will configure Alteryx server.
 Requirements
 ------------
 - `windows` - alteryx-server only supports the Windows platform.
+- `chef-client >= 12.6.0` - alteryx-server only supports chef-client versions of 12.6.0 or above
 
 <!--
 Attributes
