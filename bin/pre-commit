@@ -14,7 +14,7 @@ echo ''
 echo 'Running rubocop'
 echo '---'
 
-if ! foodcritic .; then
+if ! foodcritic -f any .; then
   echo 'Fix the above foodcritic errors'
   exit_status=1
 fi
