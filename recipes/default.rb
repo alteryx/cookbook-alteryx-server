@@ -2,7 +2,6 @@
 # Cookbook Name:: cookbook-alteryx-server
 # Recipe:: default
 #
-# Copyright 2016, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+
+# see README.md for more examples
+alteryx_install 'Alteryx Server'

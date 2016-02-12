@@ -4,8 +4,10 @@ This cookbook installs and (in the near future) will configure Alteryx server.
 
 Requirements
 ------------
-- `windows` - alteryx-server depends on the windows cookbook and the Windows platform.
+- `windows` - alteryx-server only supports the Windows platform.
+- `chef-client >= 12.6.0` - alteryx-server only supports chef-client versions of 12.6.0 or above
 
+<!--
 Attributes
 ----------
 TODO: List your cookbook attributes here.
@@ -27,12 +29,11 @@ e.g.
   </tr>
 </table>
 
+
 Usage
 -----
-#### cookbook-alteryx-server::default
-TODO: Write usage instructions for each cookbook.
+### cookbook-alteryx-server::default
 
-e.g.
 Just include `cookbook-alteryx-server` in your node's `run_list`:
 
 ```json
@@ -43,28 +44,43 @@ Just include `cookbook-alteryx-server` in your node's `run_list`:
   ]
 }
 ```
+-->
+
+Recipes
+-------
+Resources are the intended way to consume this cookbook, however we've provided a single recipe that installs and starts a standalone server.
+
+### default
+
+The default recipe downloads and installs Alteryx server.
 
 Resources
 ---------
 
-alteryx_install
-Actions: `:install`, `:uninstall`
+### alteryx_install
+Actions: `:install`
 
-Installs the latest version of Alteryx server. Defaults to `:install`.
+Installs Alteryx server.
 
+#### Attributes
+|Name  |Type  |Description|
+|------|------|-----------|
+|source|String|Local path or URL|
 
-Contributing
-------------
-TODO: (optional) If this is a public cookbook, detail the process for contributing. If this is a private cookbook, remove this section.
+Examples:
 
-e.g.
-1. Fork the repository on Github
-2. Create a named feature branch (like `add_component_x`)
-3. Write your change
-4. Write tests for your change (if applicable)
-5. Run the tests, ensuring they all pass
-6. Submit a Pull Request using Github
+```
+alteryx_install 'Alteryx server'
+```
 
+```
+alteryx_install 'Alteryx server' do
+  source 'http://downloads.alteryx.com/Alteryx10.1.7.11834/AlteryxServerInstallx64_10.1.7.11834.exe'
+end
+```
+
+<!--
 License and Authors
 -------------------
 Authors: TODO: List authors
+-->

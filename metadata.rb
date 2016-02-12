@@ -4,6 +4,5 @@ maintainer_email ''
 license          'All rights reserved'
 description      'Installs/Configures Alteryx server'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '0.0.0'
+version          '0.0.1'
 supports         'windows'
-depends          'windows'

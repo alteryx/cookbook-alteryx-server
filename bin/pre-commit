@@ -1,0 +1,22 @@
+#!/bin/bash
+
+exit_status=0
+
+echo 'Running rubocop'
+echo '---'
+
+if ! rubocop .; then
+  echo 'Fix the above rubocop errors'
+  exit_status=1
+fi
+
+echo ''
+echo 'Running rubocop'
+echo '---'
+
+if ! foodcritic -f any .; then
+  echo 'Fix the above foodcritic errors'
+  exit_status=1
+fi
+
+exit $exit_status
