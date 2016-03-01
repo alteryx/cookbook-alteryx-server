@@ -11,7 +11,7 @@ if ! rubocop .; then
 fi
 
 echo ''
-echo 'Running rubocop'
+echo 'Running foodcritic'
 echo '---'
 
 if ! foodcritic -f any .; then
