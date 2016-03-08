@@ -14,7 +14,7 @@ echo ''
 echo 'Running foodcritic'
 echo '---'
 
-if ! foodcritic -f any .; then
+if ! foodcritic -f any -t ~FC009 .; then
   echo 'Fix the above foodcritic errors'
   exit_status=1
 fi
