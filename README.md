@@ -60,7 +60,7 @@ Resources
 ### alteryx_install
 Actions: `:install`
 
-Installs Alteryx server.
+Installs Alteryx Server.
 
 #### Attributes
 |Name  |Type  |Description|
@@ -70,13 +70,23 @@ Installs Alteryx server.
 Examples:
 
 ```
-alteryx_install 'Alteryx server'
+alteryx_install 'Alteryx Server'
 ```
 
 ```
-alteryx_install 'Alteryx server' do
+alteryx_install 'Alteryx Server' do
   source 'http://downloads.alteryx.com/Alteryx10.1.7.11834/AlteryxServerInstallx64_10.1.7.11834.exe'
 end
+```
+
+### r_install
+Actions: `:install`
+
+Install R Predictive Tools for Alteryx Server.
+
+Examples:
+```
+r_install 'R tools'
 ```
 
 <!--
