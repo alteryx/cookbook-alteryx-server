@@ -4,9 +4,10 @@ module AlteryxServer
     provides :alteryx_install if respond_to?(:provides)
 
     action :install do
-      package 'Alteryx 10.1 x64' do
-        source new_resource.source.to_s
+      package AlteryxServer::Helpers.server_base_version(new_resource) do
+        source AlteryxServer::Helpers.server_source(new_resource)
         options '/s'
+        version new_resource.version
         action :install
       end
     end
