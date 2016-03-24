@@ -65,7 +65,8 @@ Installs Alteryx Server.
 #### Attributes
 |Name  |Type  |Description|
 |------|------|-----------|
-|source|String|Local path or URL|
+|source|String|**Optional**: Local path or URL (will download from alteryx.com with version if not specified)|
+|version|String|**Required**: Full version string (10.1.7.12188, for example)|
 
 Examples:
 
@@ -76,6 +77,7 @@ alteryx_install 'Alteryx Server'
 ```
 alteryx_install 'Alteryx Server' do
   source 'http://downloads.alteryx.com/Alteryx10.1.7.11834/AlteryxServerInstallx64_10.1.7.11834.exe'
+  version '10.1.7.11834'
 end
 ```
 

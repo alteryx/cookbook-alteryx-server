@@ -7,6 +7,7 @@ module AlteryxServer
     actions(:install)
     default_action :install
 
-    attribute(:source, kind_of: String, default: 'http://downloads.alteryx.com/Alteryx10.1.7.12188/AlteryxServerInstallx64_10.1.7.12188.exe')
+    attribute(:source, kind_of: String, default: nil)
+    attribute(:version, kind_of: String, default: '10.1.7.12188')
   end
 end
