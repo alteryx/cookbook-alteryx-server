@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SystemSettings>
+	<% helpers = AlteryxServer::Helpers %>
+	<% @config.sort.each do |top, mid| %>
+	<%= helpers.rts_tag(top, close=false) %>
+		<% mid.sort.each do |setting, setting_value| %>
+		<%= 
+		  helpers.rts_tag(setting, close=false) +
+		  helpers.rts_value(setting_value) +
+		  helpers.rts_tag(setting, close=true)
+		%>
+		<% end %>
+	<%= helpers.rts_tag(top, close=true) %>
+	<% end %>
+</SystemSettings>
