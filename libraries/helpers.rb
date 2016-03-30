@@ -97,5 +97,72 @@ module AlteryxServer
     def self.rts_value(value)
       [true, false].include?(value) ? value.to_s.capitalize : value.to_s
     end
+
+    # Public: Pass through an action to a Chef resource to avoid CHEF-3694.
+    #
+    # rc - The run_context object from the calling method.
+    # resource_obj - The new_resource object from the calling method.
+    # chef_obj - The Chef resource/object we want to pass the action to.
+    # action - The action (as a symbol) to be passed
+    # props - Hash of properties to pass to the Chef resource.
+    #
+    # Examples
+    #
+    #   AlteryxServer::Helpers.passthrough_action(
+    #     run_context,
+    #     new_resource,
+    #     'service[AlteryxService]',
+    #     :configure_startup,
+    #     startup_type: :manual
+    #   ) { service 'AlteryxService' do
+    #     supports restart: true
+    #     action :nothing
+    #   end }
+    #   # => #<Chef::Provider::Service::Windows:0x00000000000000
+    #          @new_resource="AlteryxService", @action=nil,
+    #          @current_resource=nil, @run_context="test",
+    #          @converge_actions=nil, @recipe_name=nil, @cookbook_name=nil,
+    #          @enabled=nil>
+    #
+    # Returns a Chef service resource
+    def self.passthrough_action(rc, resource_obj, chef_obj, action, props = nil)
+      obj = lookup_resource(rc, chef_obj, &Proc.new)
+      if props
+        props.each do |k, v|
+          obj.method(k).call(v) if obj.respond_to? k
+        end
+      end
+      obj.run_action(action)
+      resource_obj.updated_by_last_action(true) if obj.updated_by_last_action?
+    end
+
+    # Public: Find and return an existing resource. If the resource is not
+    # found, execute a given block to set it up.
+    #
+    # run_cntxt - The run_context object from the calling method.
+    # resrc - The name of the Chef resource to look up.
+    #
+    # Examples
+    #
+    #   AlteryxServer::Helpers.lookup_resource(
+    #     run_context,
+    #     'service[AlteryxService]'
+    #   ) { service 'AlteryxService' do
+    #     supports restart: true
+    #     action :nothing
+    #   end }
+    #   # => #<Chef::Provider::Service::Windows:0x00000000000000
+    #          @new_resource="AlteryxService", @action=nil,
+    #          @current_resource=nil, @run_context="test",
+    #          @converge_actions=nil, @recipe_name=nil, @cookbook_name=nil,
+    #          @enabled=nil>
+    #
+    # Return the requested Chef resource if it is found. Otherwise, create it.
+    def self.lookup_resource(run_cntxt, resrc)
+      resource_coll = run_cntxt.resource_collection
+      resource_coll.find(resrc)
+    rescue
+      yield
+    end
   end
 end

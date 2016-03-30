@@ -42,6 +42,60 @@ alteryx_install 'Alteryx Server' do
 end
 ```
 
+### alteryx_service
+Actions: `:disable`, `:enable`, `:manual`, `:restart`, `:start`, `:stop`
+
+Stop/start/restart the AlteryxService and manage automatic start on boot.
+
+#### Examples:
+
+```
+# Set service `Startup Type` to `Automatic`.
+alteryx_service 'AlteryxService'
+```
+
+```
+# Set service `Startup Type` to `Automatic`.
+alteryx_service 'AlteryxService' do
+  action :enable
+end
+```
+
+```
+# Set service `Startup Type` to `Disabled`.
+alteryx_service 'AlteryxService'
+  action :disable
+end
+```
+
+```
+# Set service `Startup Type` to `Manual`.
+alteryx_service 'AlteryxService'
+  action :manual
+end
+```
+
+```
+# Restart the AlteryxService.
+alteryx_service 'AlteryxService'
+  action :restart
+end
+```
+
+```
+# Start the AlteryxService.
+alteryx_service 'AlteryxService'
+  action :start
+end
+```
+
+```
+# Stop the AlteryxService.
+alteryx_service 'AlteryxService'
+  action :stop
+end
+```
+
 ### runtimesettings_configure
 Configures RuntimeSettings.xml overrides
 
@@ -90,9 +144,3 @@ runtimesettings_configure 'Configure RuntimeSettings' do
   )
 end
 ```
-
-<!--
-License and Authors
--------------------
-Authors: TODO: List authors
--->
