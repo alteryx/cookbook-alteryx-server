@@ -1,3 +1,4 @@
+# Load vendored gems and make them available during compile time.
 $LOAD_PATH.unshift(
   *Dir[File.expand_path('../../files/default/vendor/gems/**/lib', __FILE__)]
 )
@@ -81,11 +82,11 @@ module AlteryxServer
     # Returns a properly cased and formatted XML tag.
     def self.rts_tag(name, close)
       tag = close ? '/' : ''
-      setting = name.to_s.capitalize
-      setting.gsub!(/_[a-z0-9]+/) do |match|
-        match.gsub!(/_/, '')
-        %w(db url).include?(match) ? match.upcase : match.capitalize
+      setting = name.to_s.dup
+      setting.gsub!(/[a-z0-9]+/) do |match|
+        %w(db url ipv6).include?(match) ? match.upcase : match.capitalize
       end
+      setting.gsub!(/_/, '')
       "<#{tag}#{setting}>"
     end
 
@@ -200,7 +201,8 @@ module AlteryxServer
       parser.parse(xml)[:system_settings]
     end
 
-    # Public: Remove unnecessary keys from a hash of RuntimeSettings properties.
+    # Public: Find and preserve keys/secrets that are encrypted from
+    # the RuntimeSettings.xml overrides.
     #
     # rts_props - A hash of RuntimeSettings key/value pairs.
     #
@@ -221,7 +223,25 @@ module AlteryxServer
           rts_props[top].delete(k) unless k.to_s.include?('encrypted')
         end
       end
-      rts_props.delete_if { |_k, v| v.empty? }
+      delete_empty(rts_props)
+    end
+
+    # Public: Delete empty top-level elements from Hash or Mash.
+    #
+    # store - A hash or mash.
+    #
+    # Examples
+    #
+    #   puts store
+    #   # => {:controller=>{:server_secret_encrypted=>"000000"},
+    #         :engine=>{}}
+    #
+    #   AlteryxServer::Helpers.delete_empty(store)
+    #   # => {:controller=>{:server_secret_encrypted=>"000000"}
+    #
+    # Return a Hash or Mash with empty top-level keys removed.
+    def self.delete_empty(store)
+      store.delete_if { |_k, v| v.empty? }
     end
   end
 end

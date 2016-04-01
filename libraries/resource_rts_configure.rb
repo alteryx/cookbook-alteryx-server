@@ -12,5 +12,11 @@ module AlteryxServer
       kind_of: Hash,
       default: lazy { node['alteryx']['runtimesettings'] }
     )
+
+    attribute(
+      :restart_on_change,
+      kind_of: [TrueClass, FalseClass],
+      default: lazy { node['alteryx']['restart_on_config_change'] }
+    )
   end
 end
