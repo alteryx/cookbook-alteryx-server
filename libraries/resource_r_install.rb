@@ -14,5 +14,11 @@ module AlteryxServer
         AlteryxServer::Helpers.exe_glob('C:/Program Files/Alteryx/RInstaller/')
       end
     )
+
+    attribute(
+      :version,
+      kind_of: String,
+      default: nil
+    )
   end
 end
