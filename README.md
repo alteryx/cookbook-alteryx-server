@@ -27,7 +27,7 @@ Installs Alteryx Server.
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
 |source|String|`nil`  |**Optional**: Local path or URL (will download from alteryx.com with version if not specified)|
-|version|String|`node['alteryx']['version']`|**Required**: Full version string (10.1.7.12188, for example)|
+|version|String|`node['alteryx']['version'] = '10.1.7.12188'`|**Required**: Full version string (10.1.7.12188, for example)|
 
 #### Examples:
 
@@ -96,10 +96,6 @@ alteryx_service 'AlteryxService'
 end
 ```
 
-### runtimesettings_configure
-Configures RuntimeSettings.xml overrides
-
-
 ### r_install
 Actions: `:install`
 
@@ -118,7 +114,8 @@ Configure RuntimeSettings overrides.
 #### Attributes
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
-|config|Hash  |`node['alteryx']['runtimesettings']`|Configure RuntimeSettings.xml given a hash of settings|
+|config           |Hash   |`node['alteryx']['runtimesettings'] = { 'engine' => { 'num_threads' => '2', 'sort_join_memory' => '959' }}`|**Optional**: Configure RuntimeSettings.xml given a hash of settings|
+|restart_on_change|Boolean|`node['alteryx']['restart_on_config_change'] = false`|**Optional**: Restart the AlteryxService service when RuntimeSettings.xml has changed.|
 
 ##### `config` options
 The `config` attribute by default will look for settings under `node['alteryx']['runtimesettings']`. The recommended way to configure properties in `RuntimeSettings.xml` is to set attributes per node or per role under `node['alteryx']['runtimesettings']`. To disable the controller, for example, add the line `default['alteryx']['runtimesettings']['controller']['controller_enabled'] = false` to `attributes/default.rb`.
@@ -142,5 +139,6 @@ runtimesettings_configure 'Configure RuntimeSettings' do
       thread_count: 8
     }
   )
+  restart_on_change true
 end
 ```

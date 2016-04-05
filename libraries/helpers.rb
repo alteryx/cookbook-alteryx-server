@@ -1,3 +1,10 @@
+# Load vendored gems and make them available during compile time.
+$LOAD_PATH.unshift(
+  *Dir[File.expand_path('../../files/default/vendor/gems/**/lib', __FILE__)]
+)
+
+require 'nori'
+
 # Module for alteryx-server Cookbook so that LWRPs stay clean
 module AlteryxServer
   # Module for helper functions and classes withing alteryx-server Cookbook
@@ -75,11 +82,11 @@ module AlteryxServer
     # Returns a properly cased and formatted XML tag.
     def self.rts_tag(name, close)
       tag = close ? '/' : ''
-      setting = name.to_s.capitalize
-      setting.gsub!(/_[a-z0-9]+/) do |match|
-        match.gsub!(/_/, '')
-        %w(db url).include?(match) ? match.upcase : match.capitalize
+      setting = name.to_s.dup
+      setting.gsub!(/[a-z0-9]+/) do |match|
+        %w(db url ipv6).include?(match) ? match.upcase : match.capitalize
       end
+      setting.gsub!(/_/, '')
       "<#{tag}#{setting}>"
     end
 
@@ -120,7 +127,8 @@ module AlteryxServer
     #   end }
     #   # => #<Chef::Provider::Service::Windows:0x00000000000000
     #          @new_resource="AlteryxService", @action=nil,
-    #          @current_resource=nil, @run_context="test",
+    #          @current_resource=nil,
+    #          @run_context=#<Chef::RunContext:0x00000000000000...>,
     #          @converge_actions=nil, @recipe_name=nil, @cookbook_name=nil,
     #          @enabled=nil>
     #
@@ -153,7 +161,8 @@ module AlteryxServer
     #   end }
     #   # => #<Chef::Provider::Service::Windows:0x00000000000000
     #          @new_resource="AlteryxService", @action=nil,
-    #          @current_resource=nil, @run_context="test",
+    #          @current_resource=nil,
+    #          @run_context=#<Chef::RunContext:0x00000000000000...>,
     #          @converge_actions=nil, @recipe_name=nil, @cookbook_name=nil,
     #          @enabled=nil>
     #
@@ -163,6 +172,76 @@ module AlteryxServer
       resource_coll.find(resrc)
     rescue
       yield
+    end
+
+    # Public: Convert an XML file to a Ruby Hash.
+    #
+    # xml_file - String representation of a file path.
+    #
+    # Examples
+    #
+    #   puts File.read('C:\\some\\file.xml')
+    #   <?xml version="1.0" encoding="UTF-8"?>
+    #   <SystemSettings>
+    #      <Engine>
+    #        <NumThreads>2</NumThreads>
+    #        <SortJoinMemory>959</SortJoinMemory>
+    #      </Engine>
+    #   </SystemSettings>
+    #   # => nil
+    #
+    #   AlteryxServer::Helpers.parse_rts('C:\\some\\file.xml')
+    #   # => {:system_settings=> {
+    #         :engine=>{:num_threads=>"2", :sort_join_memory=>"959"}}}
+    #
+    # Return the constructed hash under the :system_settings key.
+    def self.parse_rts(xml_file)
+      xml = File.read(xml_file)
+      parser = Nori.new(convert_tags_to: ->(tag) { tag.snakecase.to_sym })
+      parser.parse(xml)[:system_settings]
+    end
+
+    # Public: Find and preserve keys/secrets that are encrypted from
+    # the RuntimeSettings.xml overrides.
+    #
+    # rts_props - A hash of RuntimeSettings key/value pairs.
+    #
+    # Examples
+    #
+    #   puts rts_props
+    #   # => {:controller=>{:server_secret_encrypted=>"000000"},
+    #         :engine=>{:num_threads=>"2", :sort_join_memory=>"959"}}
+    #
+    #   AlteryxServer::Helpers.trim_rts_settings(some_rts_props)
+    #   # => {:controller=>{:server_secret_encrypted=>"000000"}}
+    #
+    # Return a hash of settings we assume are valid.
+    def self.trim_rts_settings(rts_props)
+      rts_props.each do |top, mid|
+        next if mid.nil?
+        mid.each do |k, _v|
+          rts_props[top].delete(k) unless k.to_s.include?('encrypted')
+        end
+      end
+      delete_empty(rts_props)
+    end
+
+    # Public: Delete empty top-level elements from Hash or Mash.
+    #
+    # store - A hash or mash.
+    #
+    # Examples
+    #
+    #   puts store
+    #   # => {:controller=>{:server_secret_encrypted=>"000000"},
+    #         :engine=>{}}
+    #
+    #   AlteryxServer::Helpers.delete_empty(store)
+    #   # => {:controller=>{:server_secret_encrypted=>"000000"}
+    #
+    # Return a Hash or Mash with empty top-level keys removed.
+    def self.delete_empty(store)
+      store.delete_if { |_k, v| v.empty? }
     end
   end
 end
