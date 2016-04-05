@@ -10,15 +10,13 @@ module AlteryxServer
     attribute(
       :source,
       kind_of: String,
-      default: lazy do
-        AlteryxServer::Helpers.exe_glob('C:/Program Files/Alteryx/RInstaller/')
-      end
+      default: lazy { node['alteryx']['r_source'] }
     )
 
     attribute(
       :version,
       kind_of: String,
-      default: nil
+      default: lazy { node['alteryx']['r_version'] }
     )
   end
 end

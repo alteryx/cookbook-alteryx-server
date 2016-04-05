@@ -7,7 +7,11 @@ module AlteryxServer
     actions(:install)
     default_action :install
 
-    attribute(:source, kind_of: String, default: nil)
+    attribute(
+      :source,
+      kind_of: String,
+      default: lazy { node['alteryx']['source'] }
+    )
     attribute(
       :version,
       kind_of: String,

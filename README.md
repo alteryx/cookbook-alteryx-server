@@ -26,7 +26,7 @@ Installs Alteryx Server.
 #### Attributes
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
-|source|String|`nil`  |**Optional**: Local path or URL<br/>The installer will download from alteryx.com using `version` unless `source` is specified.|
+|source|String|`node['alteryx']['source'] = nil`  |**Optional**: Local path or URL<br/>The installer will download from alteryx.com using `version` unless `source` is specified.|
 |version|String|`node['alteryx']['version'] = '10.1.7.12188'`|**Required**: Full version string (10.1.7.12188, for example)|
 
 #### Examples:
@@ -111,8 +111,8 @@ Install R Predictive Tools for Alteryx Server.
 #### Attributes
 |Name   |Type  |Default|Description|
 |-------|------|-------|-----------|
-|source |String|A file matching the glob `C:\Program Files\Alteryx\RInstaller\*.exe`|**Optional**: A URL or file path for the R Installer exe.<br/>**Important**: The `version` attribute must also be set if `source` is set.|
-|version|String|`nil`|**Optional**: The version of R to install.<br/>**Required**: If `source` is set.|
+|source |String|`node['alteryx']['r_source'] = nil`|**Optional**: A URL or file path for the R Installer exe.<br/>**Important**:<ul><li>The `version` attribute must also be set if `source` is set.</li><li>If `version` is set to `nil`, the package will be installed with the exe at `C:\Program Files\Alteryx\RInstaller\`.</li></ul>|
+|version|String|`node['alteryx']['r_version'] = nil`|**Optional**: The version of R to install.<br/>**Required**: If `source` is set.|
 
 #### Examples:
 ```ruby
