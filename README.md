@@ -136,6 +136,7 @@ Configure RuntimeSettings overrides.
 |------|------|-------|-----------|
 |config           |Hash   |`node['alteryx']['runtimesettings'] = { 'engine' => { 'num_threads' => '2', 'sort_join_memory' => '959' }}`|**Optional**: Configure RuntimeSettings.xml given a hash of settings|
 |restart_on_change|Boolean|`node['alteryx']['restart_on_config_change'] = false`|**Optional**: Restart the AlteryxService service when RuntimeSettings.xml has changed.|
+|secrets          |Hash   |`nil`|**Optional**: A hash of secrets/passwords to be encrypted. See the examples section below for valid options.<br/><br/>By default we set this to `nil` instead of a `node` attribute as these values should be stored securely. Look at encrypted databags, chef-vault, citadel and others.|
 
 ##### `config` options
 The `config` attribute by default will look for settings under `node['alteryx']['runtimesettings']`. The recommended way to configure properties in `RuntimeSettings.xml` is to set attributes per node or per role under `node['alteryx']['runtimesettings']`. To disable the controller, for example, add the following line to `attributes/default.rb`:
@@ -161,6 +162,12 @@ runtimesettings_configure 'Configure RuntimeSettings' do
     worker: {
       thread_count: 8
     }
+  ),
+  secrets(
+    mongo_password: 'somesupersecretmongopassword',
+    remote_secret: 'thecontrollerssecret',
+    server_secret: 'thelocalserversecret',
+    smtp_password: 'somesupersecretsmtppassword'
   )
   restart_on_change true
 end
