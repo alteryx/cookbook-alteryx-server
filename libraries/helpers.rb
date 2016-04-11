@@ -9,6 +9,28 @@ require 'nori'
 module AlteryxServer
   # Module for helper functions and classes withing alteryx-server Cookbook
   module Helpers
+    SVC_EXE = 'C:\\Program Files\\Alteryx\\bin\\AlteryxService.exe'.freeze
+    RTS_DEFAULTS_PATH =
+      'C:\\Program Files\\Alteryx\\bin\\RuntimeData\\RuntimeSettings.xml'.freeze
+    RTS_OVERRIDES_PATH = 'C:\\ProgramData\\Alteryx\\RuntimeSettings.xml'.freeze
+    CONVERSIONS = Mash.from_hash(
+      execute_user: {
+        worker: 'execute_password_encrypted'
+      },
+      mongo_password: {
+        controller: 'mongo_db_password_encrypted'
+      },
+      remote_secret: {
+        worker: 'server_secret_encrypted'
+      },
+      server_secret: {
+        controller: 'server_secret_encrypted'
+      },
+      smtp_password: {
+        gallery: 'smtp_password_encrypted'
+      }
+    ).freeze
+
     # Public: Find the first exe alphabetically in a directory.
     # Useful for finding the R installer.
     #
@@ -174,15 +196,19 @@ module AlteryxServer
       yield
     end
 
-    # Public: Convert an XML file to a Ruby Hash.
+    # Public: Convert an XML file to a Ruby Mash.
     #
     # xml_file - String representation of a file path.
+    # trim - Whether to trim extra settings or not.
     #
     # Examples
     #
     #   puts File.read('C:\\some\\file.xml')
     #   <?xml version="1.0" encoding="UTF-8"?>
     #   <SystemSettings>
+    #      <Controller>
+    #        <ServerSecretEncrypted>20000</ServerSecretEncrypted>
+    #      </Controller>
     #      <Engine>
     #        <NumThreads>2</NumThreads>
     #        <SortJoinMemory>959</SortJoinMemory>
@@ -191,14 +217,20 @@ module AlteryxServer
     #   # => nil
     #
     #   AlteryxServer::Helpers.parse_rts('C:\\some\\file.xml')
-    #   # => {:system_settings=> {
-    #         :engine=>{:num_threads=>"2", :sort_join_memory=>"959"}}}
+    #   # => {:engine=>{:num_threads=>"2", :sort_join_memory=>"959"
+    #         :controller=>{:server_secret_encrypted=>"20000"}}}
     #
-    # Return the constructed hash under the :system_settings key.
-    def self.parse_rts(xml_file)
+    #   AlteryxServer::Helpers.parse_rts('C:\\some\\file.xml', true)
+    #   # => {:controller=>{:server_secret_encrypted=>"20000"}}}
+    #
+    # Return the constructed Mash under the :system_settings key,
+    # dropping settings if told.
+    def self.parse_rts(xml_file, trim = false)
       xml = File.read(xml_file)
       parser = Nori.new(convert_tags_to: ->(tag) { tag.snakecase.to_sym })
-      parser.parse(xml)[:system_settings]
+      hash = parser.parse(xml)[:system_settings]
+      hash = trim_rts_settings(hash) if trim
+      Mash.from_hash(hash)
     end
 
     # Public: Find and preserve keys/secrets that are encrypted from
@@ -220,7 +252,8 @@ module AlteryxServer
       rts_props.each do |top, mid|
         next if mid.nil?
         mid.each do |k, _v|
-          rts_props[top].delete(k) unless k.to_s.include?('encrypted')
+          next if k.to_s.include?('encrypted')
+          rts_props[top].delete(k)
         end
       end
       delete_empty(rts_props)
@@ -228,7 +261,7 @@ module AlteryxServer
 
     # Public: Delete empty top-level elements from Hash or Mash.
     #
-    # store - A hash or mash.
+    # store - A Hash or Mash.
     #
     # Examples
     #
@@ -242,6 +275,45 @@ module AlteryxServer
     # Return a Hash or Mash with empty top-level keys removed.
     def self.delete_empty(store)
       store.delete_if { |_k, v| v.empty? }
+    end
+
+    # Public: Check if all desired secrets are encrypted in RTS.
+    #
+    # current - A Mash of current settings in RTS.
+    # new - A Mash of secrets to be encrypted.
+    #
+    # Examples
+    #
+    #   puts current
+    #   # => {"controller"=>{"mongo_db_password_encrypted"=>"000000"}
+    #
+    #   puts new
+    #   # => {"mongo_password": "somepass"}
+    #
+    #   AlteryxServer::Helpers.secrets_unencrypted?(current, new)
+    #   # => false
+    #
+    #   ----------------
+    #
+    #   puts current
+    #   # => {"controller"=>{}
+    #
+    #   puts new
+    #   # => {"mongo_password": "somepass"}
+    #
+    #   AlteryxServer::Helpers.secrets_unencrypted?(current, new)
+    #   # => true
+    #
+    # Return true if there secrets that need to be encrypted, false otherwise.
+    def self.secrets_unencrypted?(current, new)
+      unencrypted = false
+      new.each do |new_k, _new_v|
+        key_pair = CONVERSIONS[new_k]
+        k = key_pair.keys.first
+        v = key_pair.values.first
+        return true if current[k].nil? || current[k][v].nil?
+      end
+      unencrypted
     end
   end
 end

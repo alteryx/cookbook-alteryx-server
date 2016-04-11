@@ -6,16 +6,15 @@ module AlteryxServer
     action :manage do
       # Declare helpers to help shorten our calls to the module methods.
       helpers = AlteryxServer::Helpers
+      overrides_path = helpers::RTS_OVERRIDES_PATH
+      restart_svc = new_resource.restart_on_change
 
       # Initialize overrides variable. Store encrypted secrets/passwords
-      # from RTS overrides file and in said variable and convert to a Mash.
-      overrides = helpers.parse_rts(node['alteryx']['rts_overrides_path'])
-      overrides = helpers.trim_rts_settings(overrides)
-      overrides = Mash.from_hash(overrides)
+      # from RTS overrides file into a Mash.
+      overrides = helpers.parse_rts(overrides_path, true)
 
       # Get default RTS settings and store in a Mash.
-      defaults = helpers.parse_rts(node['alteryx']['rts_defaults_path'])
-      defaults = Mash.from_hash(defaults)
+      defaults = helpers.parse_rts(helpers::RTS_DEFAULTS_PATH)
 
       # Merge user-supplied override settings onto stored
       # secret/passwords Mash.
@@ -41,11 +40,30 @@ module AlteryxServer
       overrides = helpers.delete_empty(overrides)
 
       # Render the template using the overrides variable.
-      template node['alteryx']['rts_overrides_path'] do
+      template overrides_path do
         source 'RuntimeSettings.xml.erb'
         variables config: overrides
-        if new_resource.restart_on_change
-          notifies :restart, 'service[AlteryxService]', :delayed
+        notifies :restart, 'service[AlteryxService]', :delayed if restart_svc
+      end
+
+      # Generate secrets if:
+      #  - Secrets have been passed.
+      #  - We are missing at least one desired encrypted secret.
+      #  - The user has told us to force an update of encrypted secrets.
+      #
+      # Also, restart the service if the attribute to do so is set.
+      ruby_block 'Generate secrets' do
+        block do
+          new_resource.secrets.each do |k, v|
+            setting = "set#{k.to_s.gsub('_', '')}"
+            shell_out("\"#{helpers::SVC_EXE}\" #{setting}=\"#{v}\"")
+          end
+        end
+        notifies :restart, 'service[AlteryxService]', :delayed if restart_svc
+        only_if do
+          (new_resource.secrets &&
+           helpers.secrets_unencrypted?(overrides, new_resource.secrets)
+          ) || new_resource.force_secrets_update
         end
       end
     end
