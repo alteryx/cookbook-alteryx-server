@@ -9,13 +9,11 @@ module AlteryxServer
 
     attribute(
       :source,
-      kind_of: String,
-      default: lazy { node['alteryx']['source'] }
+      kind_of: String
     )
     attribute(
       :version,
-      kind_of: String,
-      default: lazy { node['alteryx']['version'] }
+      kind_of: String
     )
   end
 end

@@ -6,7 +6,8 @@ module AlteryxServer
     action :manage do
       # Declare helpers to help shorten our calls to the module methods.
       helpers = AlteryxServer::Helpers
-      overrides_path = helpers::RTS_OVERRIDES_PATH
+      defaults_path = node['alteryx']['rts_defaults_path']
+      overrides_path = node['alteryx']['rts_overrides_path']
       restart_svc = new_resource.restart_on_change
 
       # Initialize overrides variable. Store encrypted secrets/passwords
@@ -14,7 +15,10 @@ module AlteryxServer
       overrides = helpers.parse_rts(overrides_path, true)
 
       # Get default RTS settings and store in a Mash.
-      defaults = helpers.parse_rts(helpers::RTS_DEFAULTS_PATH)
+      defaults = helpers.parse_rts(defaults_path)
+
+      rts_defaults = node['alteryx']['runtimesettings']
+      new_resource.config(rts_defaults) unless new_resource.config
 
       # Merge user-supplied override settings onto stored
       # secret/passwords Mash.
@@ -55,7 +59,7 @@ module AlteryxServer
       ruby_block 'Generate secrets' do
         block do
           new_resource.secrets.each do |k, v|
-            setting = "set#{k.to_s.gsub('_', '')}"
+            setting = "set#{k.to_s.delete('_', '')}"
             shell_out("\"#{helpers::SVC_EXE}\" #{setting}=\"#{v}\"")
           end
         end

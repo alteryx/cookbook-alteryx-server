@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SystemSettings>
+	<Controller>
+		<ServerSecretEncrypted>2000</ServerSecretEncrypted>
+	</Controller>
+	<Engine>
+		<NumThreads>2</NumThreads>
+		<SortJoinMemory>959</SortJoinMemory>
+	</Engine>
+</SystemSettings>

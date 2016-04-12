@@ -9,14 +9,12 @@ module AlteryxServer
 
     attribute(
       :config,
-      kind_of: Hash,
-      default: lazy { node['alteryx']['runtimesettings'] }
+      kind_of: Hash
     )
 
     attribute(
       :restart_on_change,
-      kind_of: [TrueClass, FalseClass],
-      default: lazy { node['alteryx']['restart_on_config_change'] }
+      kind_of: [TrueClass, FalseClass]
     )
 
     attribute(
@@ -27,8 +25,7 @@ module AlteryxServer
 
     attribute(
       :force_secrets_update,
-      kind_of: [TrueClass, FalseClass],
-      default: lazy { node['alteryx']['force_secrets_update'] }
+      kind_of: [TrueClass, FalseClass]
     )
   end
 end
