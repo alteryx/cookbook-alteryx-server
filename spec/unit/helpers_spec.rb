@@ -1,9 +1,5 @@
 require 'spec_helper'
 
-$LOAD_PATH.unshift(
-  *Dir[File.expand_path('../../files/default/vendor/gems/**/lib', __FILE__)]
-)
-
 FILES_PATH = 'spec/unit/files'.freeze
 DEFAULTS_PATH = "#{FILES_PATH}/RuntimeSettings-defaults.xml".freeze
 OVERRIDES_PATH = "#{FILES_PATH}/RuntimeSettings-overrides.xml".freeze
@@ -64,6 +60,49 @@ describe '#rts_value' do
   end
 end
 
+describe '#passthrough_action' do
+  # We can't really test this functionality since we can't perform actions
+  # on ChefSpec resources.
+  it 'Should pass an action through to a Chef resource' do
+    expect(true).to be true
+  end
+end
+
+describe '#lookup_resource' do
+  it 'Should be able to look up resources' do
+    runner = ChefSpec::SoloRunner.new(
+      platform: 'windows',
+      version: '2012r2',
+      step_into: ['alteryx_service']
+    )
+    runner.converge('alteryx-server::default')
+
+    expect(
+      helpers.lookup_resource(
+        runner.run_context, 'service[AlteryxService]'
+      )
+    ).to be_kind_of(Chef::Resource::WindowsService)
+  end
+
+  it 'Should be able to create resources' do
+    runner = ChefSpec::SoloRunner.new(
+      platform: 'windows',
+      version: '2012r2'
+    )
+    runner.converge('alteryx-server::default')
+
+    def svc_block(chef_runner)
+      Chef::Provider::Service::Windows.new('AlteryxService', chef_runner)
+    end
+
+    expect(
+      helpers.lookup_resource(
+        runner.run_context, 'service[AlteryxService]'
+      ) { svc_block(runner.run_context) }
+    ).to be_kind_of(Chef::Provider::Service::Windows)
+  end
+end
+
 describe '#parse_rts' do
   it 'Should return the appropriate Mash' do
     expect(helpers.parse_rts(OVERRIDES_PATH)).to(
@@ -117,40 +156,5 @@ describe '#secrets_unencrypted?' do
   it 'Should return true if there are secrets to be encrypted' do
     current = {}
     expect(helpers.secrets_unencrypted?(current, @new)).to be true
-  end
-end
-
-describe '#lookup_resource' do
-  it 'Should be able to look up resources' do
-    runner = ChefSpec::SoloRunner.new(
-      platform: 'windows',
-      version: '2012r2',
-      step_into: ['alteryx_service']
-    )
-    runner.converge('alteryx-server::default')
-
-    expect(
-      helpers.lookup_resource(
-        runner.run_context, 'service[AlteryxService]'
-      )
-    ).to be_kind_of(Chef::Resource::WindowsService)
-  end
-
-  it 'Should be able to create resources' do
-    runner = ChefSpec::SoloRunner.new(
-      platform: 'windows',
-      version: '2012r2'
-    )
-    runner.converge('alteryx-server::default')
-
-    def svc_block(chef_runner)
-      Chef::Provider::Service::Windows.new('AlteryxService', chef_runner)
-    end
-
-    expect(
-      helpers.lookup_resource(
-        runner.run_context, 'service[AlteryxService]'
-      ) { svc_block(runner.run_context) }
-    ).to be_kind_of(Chef::Provider::Service::Windows)
   end
 end

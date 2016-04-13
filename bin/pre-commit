@@ -1,12 +1,14 @@
 #!/bin/bash
 
 exit_status=0
+exit_message="Pre-commit errors:\n"
+errors=()
 
 echo 'Running rubocop'
 echo '---'
 
 if ! rubocop .; then
-  echo 'Fix the above rubocop errors'
+  errors+=(rubocop)
   exit_status=1
 fi
 
@@ -15,7 +17,7 @@ echo 'Running foodcritic'
 echo '---'
 
 if ! foodcritic -f any .; then
-  echo 'Fix the above foodcritic errors'
+  errors+=(foodcritic)
   exit_status=1
 fi
 
@@ -24,7 +26,17 @@ echo 'Running rspec'
 echo '---'
 
 if ! RUBYOPT='-W0' rspec .; then
-  echo 'Fix the above rspec errors'
+  errors+=(rspec)
+  exit_status=1
 fi
 
+if [ -n "$errors" ]; then
+  for i in ${errors[@]}; do
+    exit_message+=" - $i\n"
+  done
+else
+  exit_message+=" - none\n"
+fi
+
+echo -e "$exit_message"
 exit $exit_status

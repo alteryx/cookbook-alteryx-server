@@ -130,7 +130,6 @@ module AlteryxServer
     # Public: Pass through an action to a Chef resource to avoid CHEF-3694.
     #
     # rc - The run_context object from the calling method.
-    # resource_obj - The new_resource object from the calling method.
     # chef_obj - The Chef resource/object we want to pass the action to.
     # action - The action (as a symbol) to be passed
     # props - Hash of properties to pass to the Chef resource.
@@ -155,7 +154,7 @@ module AlteryxServer
     #          @enabled=nil>
     #
     # Returns a Chef resource
-    def self.passthrough_action(rc, resource_obj, chef_obj, action, props = nil)
+    def self.passthrough_action(rc, chef_obj, action, props = nil)
       obj = lookup_resource(rc, chef_obj, &Proc.new)
       if props
         props.each do |k, v|
@@ -163,7 +162,6 @@ module AlteryxServer
         end
       end
       obj.run_action(action)
-      resource_obj.updated_by_last_action(true) if obj.updated_by_last_action?
     end
 
     # Public: Find and return an existing resource. If the resource is not
