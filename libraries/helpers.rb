@@ -9,11 +9,9 @@ require 'nori'
 module AlteryxServer
   # Module for helper functions and classes withing alteryx-server Cookbook
   module Helpers
+    # Declare some constants and make them immutable.
     SVC_EXE = 'C:\\Program Files\\Alteryx\\bin\\AlteryxService.exe'.freeze
     R_DIR = 'C:/Program Files/Alteryx/RInstaller/'.freeze
-    RTS_DEFAULTS_PATH =
-      'C:\\Program Files\\Alteryx\\bin\\RuntimeData\\RuntimeSettings.xml'.freeze
-    RTS_OVERRIDES_PATH = 'C:\\ProgramData\\Alteryx\\RuntimeSettings.xml'.freeze
     CONVERSIONS = Mash.from_hash(
       execute_user: {
         worker: 'execute_password_encrypted'
@@ -57,7 +55,7 @@ module AlteryxServer
     #
     # Examples
     #
-    #   AlteryxServer::Helpers.server_link(version)
+    #   AlteryxServer::Helpers.server_link('10.1.7.11834')
     #   # => 'http://downloads.alteryx.com/Alteryx10.1.7.11834/'\
     #        'AlteryxServerInstallx64_10.1.7.11834.exe'
     #
@@ -74,9 +72,7 @@ module AlteryxServer
     #
     # Examples
     #
-    #   # puts version
-    #   # => '10.1.7.11834'
-    #   AlteryxServer::Helpers.package_name(version)
+    #   AlteryxServer::Helpers.package_name('10.1.7.11834')
     #   # => 'Alteryx 10.1 x64'
     #
     # Return the major/minor version from a full version string.
@@ -120,6 +116,12 @@ module AlteryxServer
     #  AlteryxServer::Helpers.rts_value(false)
     #  # => 'False'
     #
+    #  AlteryxServer::Helpers.rts_value(true)
+    #  # => 'True'
+    #
+    #  AlteryxServer::Helpers.rts_value('some value')
+    #  # => 'some value'
+    #
     # Returns a formatted string
     def self.rts_value(value)
       [true, false].include?(value) ? value.to_s.capitalize : value.to_s
@@ -152,7 +154,7 @@ module AlteryxServer
     #          @converge_actions=nil, @recipe_name=nil, @cookbook_name=nil,
     #          @enabled=nil>
     #
-    # Returns a Chef service resource
+    # Returns a Chef resource
     def self.passthrough_action(rc, resource_obj, chef_obj, action, props = nil)
       obj = lookup_resource(rc, chef_obj, &Proc.new)
       if props

@@ -19,4 +19,12 @@ if ! foodcritic -f any .; then
   exit_status=1
 fi
 
+echo ''
+echo 'Running rspec'
+echo '---'
+
+if ! RUBYOPT='-W0' rspec .; then
+  echo 'Fix the above rspec errors'
+fi
+
 exit $exit_status
