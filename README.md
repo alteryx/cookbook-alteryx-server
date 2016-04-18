@@ -172,3 +172,13 @@ runtimesettings_configure 'Configure RuntimeSettings' do
   restart_on_change true
 end
 ```
+
+Testing
+-------
+This cookbook comes with both unit tests (ChefSpec) and integration tests (test-kitchen and ServerSpec).
+
+### Unit tests
+From the root of the repository, run `rspec .` to execute the unit tests.
+
+### Integration tests
+Use the included `.kitchen.yml` file as a base and add customizations to `.kitchen.local.yml` to create an instance in test-kitchen. Run `kitchen verify` to execute the integration tests.
