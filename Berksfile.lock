@@ -1,0 +1,6 @@
+DEPENDENCIES
+  alteryx-server
+    path: .
+
+GRAPH
+  alteryx-server (0.8.0)

@@ -9,10 +9,9 @@ require 'nori'
 module AlteryxServer
   # Module for helper functions and classes withing alteryx-server Cookbook
   module Helpers
+    # Declare some constants and make them immutable.
     SVC_EXE = 'C:\\Program Files\\Alteryx\\bin\\AlteryxService.exe'.freeze
-    RTS_DEFAULTS_PATH =
-      'C:\\Program Files\\Alteryx\\bin\\RuntimeData\\RuntimeSettings.xml'.freeze
-    RTS_OVERRIDES_PATH = 'C:\\ProgramData\\Alteryx\\RuntimeSettings.xml'.freeze
+    R_DIR = 'C:/Program Files/Alteryx/RInstaller/'.freeze
     CONVERSIONS = Mash.from_hash(
       execute_user: {
         worker: 'execute_password_encrypted'
@@ -47,43 +46,38 @@ module AlteryxServer
     # Returns the file path of the first alphabetical exe in a given directory.
     def self.exe_glob(dir)
       exe = Dir.glob("#{dir}*.exe")[0]
-      exe.gsub('/', '\\')
+      exe.tr('/', '\\')
     end
 
     # Public: Construct download url or use source specified in LWRP call.
     #
-    # resource - The 'new_resource' object created in an action of the
-    #            LWRP provider.
+    # version - Full version string.
     #
     # Examples
     #
-    #   AlteryxServer::Helpers.server_source(new_resource)
+    #   AlteryxServer::Helpers.server_link('10.1.7.11834')
     #   # => 'http://downloads.alteryx.com/Alteryx10.1.7.11834/'\
     #        'AlteryxServerInstallx64_10.1.7.11834.exe'
     #
     # Returns either the new_resource.source property or the constructed URL.
-    def self.server_source(resource)
+    def self.server_link(version)
       base_url = 'http://downloads.alteryx.com/Alteryx'
       sub_path = 'AlteryxServerInstallx64_'
-      full_version = resource.version
-      full_url = "#{base_url}#{full_version}/#{sub_path}#{full_version}.exe"
-      resource.source ? resource.source : full_url
+      "#{base_url}#{version}/#{sub_path}#{version}.exe"
     end
 
-    # Public: Get the base server version from a version string.
+    # Public: Construct the package name for server installs.
     #
-    # resource - The 'new_resource' object created in an action of the
-    #            LWRP provider.
+    # version - A full version string.
     #
     # Examples
     #
-    #   # new_resource.version = '10.1.7.11834'
-    #   AlteryxServer::Helpers.base_version(new_resource)
-    #   # => '10.1'
+    #   AlteryxServer::Helpers.package_name('10.1.7.11834')
+    #   # => 'Alteryx 10.1 x64'
     #
     # Return the major/minor version from a full version string.
-    def self.server_base_version(resource)
-      base_version = resource.version.match(/[0-9]+\.[0-9]+/).to_s
+    def self.package_name(version)
+      base_version = version.match(/[0-9]+\.[0-9]+/).to_s
       "Alteryx #{base_version} x64"
     end
 
@@ -108,7 +102,7 @@ module AlteryxServer
       setting.gsub!(/[a-z0-9]+/) do |match|
         %w(db url ipv6).include?(match) ? match.upcase : match.capitalize
       end
-      setting.gsub!(/_/, '')
+      setting.delete!('_')
       "<#{tag}#{setting}>"
     end
 
@@ -122,6 +116,12 @@ module AlteryxServer
     #  AlteryxServer::Helpers.rts_value(false)
     #  # => 'False'
     #
+    #  AlteryxServer::Helpers.rts_value(true)
+    #  # => 'True'
+    #
+    #  AlteryxServer::Helpers.rts_value('some value')
+    #  # => 'some value'
+    #
     # Returns a formatted string
     def self.rts_value(value)
       [true, false].include?(value) ? value.to_s.capitalize : value.to_s
@@ -130,7 +130,6 @@ module AlteryxServer
     # Public: Pass through an action to a Chef resource to avoid CHEF-3694.
     #
     # rc - The run_context object from the calling method.
-    # resource_obj - The new_resource object from the calling method.
     # chef_obj - The Chef resource/object we want to pass the action to.
     # action - The action (as a symbol) to be passed
     # props - Hash of properties to pass to the Chef resource.
@@ -154,8 +153,8 @@ module AlteryxServer
     #          @converge_actions=nil, @recipe_name=nil, @cookbook_name=nil,
     #          @enabled=nil>
     #
-    # Returns a Chef service resource
-    def self.passthrough_action(rc, resource_obj, chef_obj, action, props = nil)
+    # Returns a Chef resource
+    def self.passthrough_action(rc, chef_obj, action, props = nil)
       obj = lookup_resource(rc, chef_obj, &Proc.new)
       if props
         props.each do |k, v|
@@ -163,7 +162,6 @@ module AlteryxServer
         end
       end
       obj.run_action(action)
-      resource_obj.updated_by_last_action(true) if obj.updated_by_last_action?
     end
 
     # Public: Find and return an existing resource. If the resource is not
@@ -285,10 +283,10 @@ module AlteryxServer
     # Examples
     #
     #   puts current
-    #   # => {"controller"=>{"mongo_db_password_encrypted"=>"000000"}
+    #   # => {"controller"=>{"mongo_db_password_encrypted"=>"000000"}}
     #
     #   puts new
-    #   # => {"mongo_password": "somepass"}
+    #   # => {"mongo_password" => "somepass"}
     #
     #   AlteryxServer::Helpers.secrets_unencrypted?(current, new)
     #   # => false
@@ -296,10 +294,10 @@ module AlteryxServer
     #   ----------------
     #
     #   puts current
-    #   # => {"controller"=>{}
+    #   # => {"controller"=>{}}
     #
     #   puts new
-    #   # => {"mongo_password": "somepass"}
+    #   # => {"mongo_password" => "somepass"}
     #
     #   AlteryxServer::Helpers.secrets_unencrypted?(current, new)
     #   # => true

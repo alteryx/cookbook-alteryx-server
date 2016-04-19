@@ -17,7 +17,6 @@ module AlteryxServer
     action :disable do
       helpers.passthrough_action(
         run_context,
-        new_resource,
         ayx_svc,
         :disable
       ) { svc_block }
@@ -26,7 +25,6 @@ module AlteryxServer
     action :enable do
       helpers.passthrough_action(
         run_context,
-        new_resource,
         ayx_svc,
         :enable
       ) { svc_block }
@@ -35,7 +33,6 @@ module AlteryxServer
     action :manual do
       helpers.passthrough_action(
         run_context,
-        new_resource,
         ayx_svc,
         :configure_startup,
         startup_type: :manual
@@ -45,7 +42,6 @@ module AlteryxServer
     action :restart do
       helpers.passthrough_action(
         run_context,
-        new_resource,
         ayx_svc,
         :restart
       ) { svc_block }
@@ -54,7 +50,6 @@ module AlteryxServer
     action :start do
       helpers.passthrough_action(
         run_context,
-        new_resource,
         ayx_svc,
         :start
       ) { svc_block }
@@ -63,7 +58,6 @@ module AlteryxServer
     action :stop do
       helpers.passthrough_action(
         run_context,
-        new_resource,
         ayx_svc,
         :stop
       ) { svc_block }

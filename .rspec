@@ -1,0 +1,4 @@
+--color
+--require spec_helper
+--format d
+--exclude-pattern "{test,files}/**/*_spec.rb" 
