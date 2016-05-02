@@ -46,7 +46,7 @@ module AlteryxServer
     # Returns the file path of the first alphabetical exe in a given directory.
     def self.exe_glob(dir)
       exe = Dir.glob("#{dir}*.exe")[0]
-      exe.tr('/', '\\')
+      exe.tr('/', '\\') if exe
     end
 
     # Public: Construct download url or use source specified in LWRP call.
