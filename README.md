@@ -18,7 +18,7 @@ The default recipe downloads, installs, and configures Alteryx Server as well as
 Resources
 ---------
 
-### alteryx_install
+### alteryx_server_package
 Actions: `:install`
 
 Installs Alteryx Server.
@@ -32,17 +32,17 @@ Installs Alteryx Server.
 #### Examples:
 
 ```ruby
-alteryx_install 'Alteryx Server'
+alteryx_server_package 'Alteryx Server'
 ```
 
 ```ruby
-alteryx_install 'Alteryx Server' do
+alteryx_server_package 'Alteryx Server' do
   source 'http://downloads.alteryx.com/Alteryx10.1.7.11834/AlteryxServerInstallx64_10.1.7.11834.exe'
   version '10.1.7.11834'
 end
 ```
 
-### alteryx_service
+### alteryx_server_service
 Actions: `:disable`, `:enable`, `:manual`, `:restart`, `:start`, `:stop`
 
 Stop/start/restart the AlteryxService and manage automatic start on boot.
@@ -51,59 +51,59 @@ Stop/start/restart the AlteryxService and manage automatic start on boot.
 
 ```ruby
 # Set service `Startup Type` to `Automatic`.
-alteryx_service 'AlteryxService'
+alteryx_server_service 'AlteryxService'
 ```
 
 ```ruby
 # Set service `Startup Type` to `Automatic`.
-alteryx_service 'AlteryxService' do
+alteryx_server_service 'AlteryxService' do
   action :enable
 end
 ```
 
 ```ruby
 # Set service `Startup Type` to `Disabled`.
-alteryx_service 'AlteryxService' do
+alteryx_server_service 'AlteryxService' do
   action :disable
 end
 ```
 
 ```ruby
 # Set service `Startup Type` to `Manual`.
-alteryx_service 'AlteryxService' do
+alteryx_server_service 'AlteryxService' do
   action :manual
 end
 ```
 
 ```ruby
 # Restart the AlteryxService.
-alteryx_service 'AlteryxService' do
+alteryx_server_service 'AlteryxService' do
   action :restart
 end
 ```
 
 ```ruby
 # Start the AlteryxService.
-alteryx_service 'AlteryxService' do
+alteryx_server_service 'AlteryxService' do
   action :start
 end
 ```
 
 ```ruby
 # Stop the AlteryxService.
-alteryx_service 'AlteryxService' do
+alteryx_server_service 'AlteryxService' do
   action :stop
 end
 ```
 
 ```ruby
 # Enable and start the AlteryxService.
-alteryx_service 'AlteryxService do
+alteryx_server_service 'AlteryxService do
   action [:enable, :start]
 end
 ```
 
-### r_install
+### alteryx_server_r_package
 Actions: `:install`
 
 Install R Predictive Tools for Alteryx Server.
@@ -116,17 +116,17 @@ Install R Predictive Tools for Alteryx Server.
 
 #### Examples:
 ```ruby
-r_install 'R Predictive Tools'
+alteryx_server_r_package 'R Predictive Tools'
 ```
 
 ```ruby
-r_install 'R Predictive Tools' do
+alteryx_server_r_package 'R Predictive Tools' do
   source 'http://downloads.alteryx.com/Alteryx10.1.6.11313/RInstaller_10.1.6.11313.exe'
   version '3.1.3'
 end
 ```
 
-### runtimesettings_configure
+### alteryx_server_runtimesettings
 Actions: `:manage`
 
 Configure RuntimeSettings overrides.
@@ -144,15 +144,15 @@ The `config` attribute by default will look for settings under `node['alteryx'][
 default['alteryx']['runtimesettings']['controller']['controller_enabled'] = false
 ```
 
-One could also achieve the same result by passing a hash directly to `runtimesettings_configure`. See the example below.
+One could also achieve the same result by passing a hash directly to `alteryx_server_runtimesettings`. See the example below.
 
 #### Examples:
 ```ruby
-runtimesettings_configure 'RuntimeSettings.xml'
+alteryx_server_runtimesettings 'RuntimeSettings.xml'
 ```
 
 ```ruby
-runtimesettings_configure 'Configure RuntimeSettings' do
+alteryx_server_runtimesettings 'Configure RuntimeSettings' do
   config(
     controller: {
       controller_enabled: false,

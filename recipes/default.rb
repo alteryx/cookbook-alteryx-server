@@ -4,10 +4,10 @@
 #
 
 # see README.md for more examples
-alteryx_install 'Alteryx Server'
+alteryx_server_package 'Alteryx Server'
 
-r_install 'R Predictive Tools'
+alteryx_server_r_package 'R Predictive Tools'
 
-alteryx_service 'AlteryxService'
+alteryx_server_service 'AlteryxService'
 
-runtimesettings_configure 'RuntimeSettings.xml'
+alteryx_server_runtimesettings 'RuntimeSettings.xml'
