@@ -5,7 +5,6 @@
 # Copyright (c) 2016 The Authors, All Rights Reserved.
 
 require 'spec_helper'
-require 'pry'
 
 describe 'alteryx-server::default' do
   context 'When all attributes are default, on Windows' do
@@ -13,6 +12,7 @@ describe 'alteryx-server::default' do
     let(:chef_run) do
       lwrps = %w(alteryx_server_package
                  alteryx_server_r_package
+                 alteryx_server_license
                  alteryx_server_runtimesettings
                  alteryx_server_service)
       runner = ChefSpec::SoloRunner.new(
@@ -33,7 +33,7 @@ describe 'alteryx-server::default' do
     end
 
     it 'Installs Alteryx Server' do
-      expect(chef_run).to install_package('Alteryx 10.1 x64')
+      expect(chef_run).to install_package('Alteryx 10.5 x64')
     end
 
     it 'Installs R Predictive Tools' do

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe package('Alteryx 10.1 x64') do
-  it { should be_installed.with_version('10.1.7.12188') }
+describe package('Alteryx 10.5 x64') do
+  it { should be_installed.with_version('10.5.9.15014') }
 end
 
 describe package('Alteryx Predictive Tools with R 3.2.3') do
@@ -14,15 +14,9 @@ describe service('AlteryxService') do
 end
 
 describe file('C:\\ProgramData\\Alteryx\\RuntimeSettings.xml') do
-  content = <<-EOH.gsub(/^ +/, '')
-    <?xml version="1.0" encoding="UTF-8"?>
-    <SystemSettings>
-    \t<Engine>
-    \t\t<NumThreads>2</NumThreads>
-    \t\t<SortJoinMemory>959</SortJoinMemory>
-    \t</Engine>
-    </SystemSettings>
-  EOH
+  # We can't reliably test the contents of RuntimeSettings.xml since encrypted
+  # values are always unique.
+  #
+  # We'll let the unit tests take care of verifying the defaults.
   it { should be_file }
-  its(:content) { should match content }
 end
