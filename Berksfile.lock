@@ -3,4 +3,4 @@ DEPENDENCIES
     path: .
 
 GRAPH
-  alteryx-server (0.9.0)
+  alteryx-server (0.10.0)

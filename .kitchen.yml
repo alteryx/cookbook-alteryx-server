@@ -18,3 +18,7 @@ suites:
   - name: default
     run_list:
       - recipe[alteryx-server::default]
+  - name: license
+    run_list:
+      - recipe[alteryx-server::default]
+      - recipe[alteryx-server::license]

@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cookbook-alteryx-server
+# Cookbook Name:: alteryx-server
 # Recipe:: default
 #
 

@@ -21,13 +21,13 @@ Resources
 ### alteryx_server_package
 Actions: `:install`
 
-Installs Alteryx Server.
+Install Alteryx Server.
 
 #### Attributes
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
 |source|String|`node['alteryx']['source'] = nil`  |**Optional**: Local path or URL<br/>The installer will download from alteryx.com using `version` unless `source` is specified.|
-|version|String|`node['alteryx']['version'] = '10.1.7.12188'`|**Required**: Full version string (10.1.7.12188, for example)|
+|version|String|`node['alteryx']['version'] = '10.5.9.15014'`|**Required**: Full version string (10.5.9.15014, for example)|
 
 #### Examples:
 
@@ -42,6 +42,35 @@ alteryx_server_package 'Alteryx Server' do
 end
 ```
 
+### alteryx_server_license
+Actions: `:activate`
+
+Activate an Alteryx Server license.
+
+**Important**: Each node must have a unique e-mail address for the license key, otherwise the license seat will be moved to whichever node licensed the seat last.
+
+#### Attributes
+|Name  |Type  |Default|Description|
+|------|------|-------|-----------|
+|email |String|`node['alteryx']['license']['email'] = nil`|**Required**: Unique e-mail address to give to a licensed seat.|
+|skip |Boolean|`node['alteryx']['license']['skip'] = false`|**Optional**: Whether or not to skip a license activation.|
+
+#### Examples
+
+```ruby
+# Replace xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx with your key
+alteryx_server_license 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' do
+  email 'test@example.com'
+end
+```
+
+```ruby
+# Replace xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx with your key
+alteryx_server_license 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' do
+  email 'test@example.com'
+  force true
+end
+```
 ### alteryx_server_service
 Actions: `:disable`, `:enable`, `:manual`, `:restart`, `:start`, `:stop`
 
