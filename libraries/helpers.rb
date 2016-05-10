@@ -100,7 +100,7 @@ module AlteryxServer
       tag = close ? '/' : ''
       setting = name.to_s.dup
       setting.gsub!(/[a-z0-9]+/) do |match|
-        %w(db url ipv6).include?(match) ? match.upcase : match.capitalize
+        %w(db url ipv6 sql).include?(match) ? match.upcase : match.capitalize
       end
       setting.delete!('_')
       "<#{tag}#{setting}>"
