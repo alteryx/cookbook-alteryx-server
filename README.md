@@ -15,6 +15,16 @@ Resources are the intended way to consume this cookbook, however we've provided 
 
 The default recipe downloads, installs, and configures Alteryx Server as well as Alteryx R Predictive Tools.
 
+### license
+
+This recipe licenses Alteryx Server and starts AlteryxService.
+
+Limitations
+-----------
+
+- No functionality exists to check if the desired license is already activated. Use the `node['alteryx']['license']['skip']` attribute or the `skip` property in the `alteryx_server_license` resource to skip activation.
+- `mongo_db_search_password_encrypted` and `mongo_db_web_password_encrypted` cannot be set through `secrets` property in the `alteryx_server_runtimesettings` resource. To set these connections, one either has to configure them through the configuration GUI or put them in plain text in `mongo_db_search_override` and `mongo_db_web_override`, respectively.
+
 Resources
 ---------
 
