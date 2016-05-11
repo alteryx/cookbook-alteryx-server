@@ -6,8 +6,11 @@ default['alteryx']['r_version'] = nil
 default['alteryx']['restart_on_config_change'] = false
 default['alteryx']['source'] = nil
 default['alteryx']['version'] = '10.5.9.15014'
-default['alteryx']['runtimesettings']['engine']['num_threads'] = 2
-default['alteryx']['runtimesettings']['engine']['sort_join_memory'] = 959
+default['alteryx']['runtimesettings']['engine']['num_threads'] =
+  node['cpu']['total'] + 1
+default['alteryx']['runtimesettings']['engine']['sort_join_memory'] =
+  (node['kernel']['os_info']['total_visible_memory_size'].to_i * 0.8 /
+  1024 / (node['cpu']['total'] + 1)).to_i
 default['alteryx']['rts_defaults_path'] =
   'C:\\Program Files\\Alteryx\\bin\\RuntimeData\\RuntimeSettings.xml'
 default['alteryx']['rts_overrides_path'] =
