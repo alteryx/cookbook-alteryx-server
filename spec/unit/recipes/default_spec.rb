@@ -19,6 +19,9 @@ describe 'alteryx-server::default' do
         platform: 'windows',
         version: '2012r2',
         step_into: lwrps) do |node|
+          node.automatic['cpu']['total'] = 2
+          node.automatic['kernel']['os_info']['total_visible_memory_size'] =
+            1_000_000
           node.set['alteryx']['r_source'] = 'C:\\test.exe'
           node.set['alteryx']['r_version'] = '3.2.3'
           node.set['alteryx']['rts_defaults_path'] =
@@ -56,8 +59,8 @@ describe 'alteryx-server::default' do
         \t\t<ServerSecretEncrypted>2000</ServerSecretEncrypted>
         \t</Controller>
         \t<Engine>
-        \t\t<NumThreads>2</NumThreads>
-        \t\t<SortJoinMemory>959</SortJoinMemory>
+        \t\t<NumThreads>3</NumThreads>
+        \t\t<SortJoinMemory>260</SortJoinMemory>
         \t</Engine>
         </SystemSettings>
       EOH

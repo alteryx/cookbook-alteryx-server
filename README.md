@@ -15,6 +15,16 @@ Resources are the intended way to consume this cookbook, however we've provided 
 
 The default recipe downloads, installs, and configures Alteryx Server as well as Alteryx R Predictive Tools.
 
+### license
+
+This recipe licenses Alteryx Server and starts AlteryxService.
+
+Limitations
+-----------
+
+- No functionality exists to check if the desired license is already activated. Use the `node['alteryx']['license']['skip']` attribute or the `skip` property in the `alteryx_server_license` resource to skip activation.
+- `mongo_db_search_password_encrypted` and `mongo_db_web_password_encrypted` cannot be set through `secrets` property in the `alteryx_server_runtimesettings` resource. To set these connections, one either has to configure them through the configuration GUI or put them in plain text in `mongo_db_search_override` and `mongo_db_web_override`, respectively.
+
 Resources
 ---------
 
@@ -68,7 +78,7 @@ end
 # Replace xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx with your key
 alteryx_server_license 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' do
   email 'test@example.com'
-  force true
+  skip true
 end
 ```
 ### alteryx_server_service
@@ -163,7 +173,7 @@ Configure RuntimeSettings overrides.
 #### Attributes
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
-|config           |Hash   |`node['alteryx']['runtimesettings'] = { 'engine' => { 'num_threads' => '2', 'sort_join_memory' => '959' }}`|**Optional**: Configure RuntimeSettings.xml given a hash of settings|
+|config           |Hash   |`node['alteryx']['runtimesettings'] = { 'engine' => { 'num_threads' => node['cpu']['total'] + 1,'sort_join_memory' =>  (node['kernel']['os_info']['total_visible_memory_size'].to_i * 0.8 / 1024 / (node['cpu']['total'] + 1)).to_i }}`|**Optional**: Configure RuntimeSettings.xml given a hash of settings. `num_threads` is set to the number of cores plus one. `sort_join_memory` is set to 80% of the total memory divided by `num_threads`.|
 |restart_on_change|Boolean|`node['alteryx']['restart_on_config_change'] = false`|**Optional**: Restart the AlteryxService service when RuntimeSettings.xml has changed.|
 |secrets          |Hash   |`nil`|**Optional**: A hash of secrets/passwords to be encrypted. See the examples section below for valid options.<br/><br/>By default we set this to `nil` instead of a `node` attribute as these values should be stored securely. Look at encrypted databags, chef-vault, citadel and others.|
 
@@ -201,6 +211,103 @@ alteryx_server_runtimesettings 'Configure RuntimeSettings' do
   restart_on_change true
 end
 ```
+#### Options
+######`controller` options
+The following contains available options and descriptions for child settings under the `controller` attribute.
+|Name|Type|Default value|Description|
+|----|----|-------------|-----------|
+|cleanup_queue_inputs_time_to_live|`Integer`:min|`0`|The age of queue input items (uploaded files) before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
+|cleanup_queue_time_to_live|`Integer`:min|`0`|The age of queue items and results before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
+|cleanup_scheduler_time_to_live|`Integer`:min|`0`|The age of scheduler items before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
+|controller_enabled|`Boolean`|`true`|`true` if this node is the Controller, `false` if not. Only run one Controller per Server.|
+|embedded_mongo_db_enabled|`Boolean`|`false`|`true` if Embedded MongoDB is enabled (default for Private Server), `false` if using SQLite or User-managed MongoDB.|
+|embedded_mongo_db_root_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\Persistence\\Mongo'`|Necessary only if you are using Embedded MongoDB. The root path is the location where database files should be stored.|
+|gallery_enabled|`Boolean`|`false`|`true` if this node is a Gallery, `false` otherwise.|
+|logging_enabled|`Boolean`|`false`|If `true`, logging is enabled otherwise logging disabled.|
+|logging_file_max_size|`Integer`:mb|`10`|Approximate log file size before rotating.|
+|logging_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\AlteryxServiceLog.log'`|Full path to log file.|
+|logging_rotation_enabled|`Boolean`|`true`|If `true`, rotate log file when it reaches approximate size limit.|
+|logging_severity_threshold|`Integer`|`6`|`0-7`: Minimum Syslog logging level, suggested is minimum `5`, `7` is Debug (highest).|
+|map_tile_disk_cache_max_size|`Integer`:mb|`1024`|This is the maximum amount of space to consume for caching tiles on the hard drive. A higher disk cache will result in greater consumption of drive space, but may increase performance of map tile requests.|
+|map_tile_mem_cache_max_size|`Integer`|`10000`|This is the maximum number of map tiles that will be stored in memory. 1,000 tiles will require roughly 450MB of memory. A higher memory cache will result in more tiles being stored to increase performance, but will require more system resources.|
+|map_tile_reference_layers_time_to_live|`Integer`:sec|`86400`|The amount of time to persist reference layer information. Increasing this number may help optimize performance of frequently requested layers. If a reference layer expires, it will be generated again the next time it is requested.|
+|mongo_db_database_name|`String`|`nil`|Name of the Service database in User-managed MongoDB instance.|
+|mongo_db_enabled|`Boolean`|`false`|If `true` use User-managed MongoDB, otherwise use either (Embedded MongoDB or SQLite).|
+|mongo_db_password_encrypted|`String`|`nil`|If using auth on MongoDB, encrypted MongoDB password. Set using `mongo_password` in the `secrets` property of the `alteryx_server_runtimesettings` resource.|
+|mongo_db_server_name|`String`|`nil`|MongoDB server name as `host:port`.|
+|mongo_db_user_name|`String`|`nil`|If using auth on MongoDB, valid username for MongoDB.|
+|scheduler_auto_connect_enabled|`Boolean`|`true`|Enabling this setting will allow users on this machine to auto-connect to the Scheduler. You may need to enable this if you are having difficulties connecting to the Scheduler.|
+|server_secret_encrypted|`String`|`nil`|Encrypted server secret. Set using `server_secret` in the `secrets` property of the `alteryx_server_runtimesettings` resource.|
+|sqlite_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\Persistence'`|Necessary only if you are using SQLite. The root path is the location where database files should be stored.|
+|web_interface_staging_path|`String`|`alteryx['runtimesettings']['worker']['staging_path']`|The web interface staging path is the location where the Controller will write any necessary temporary or cache files. This setting should point to a location that is safe to write large amounts of files.|
+
+######`engine` options
+The following contains available options and descriptions for child settings under the `engine` attribute.
+|Name|Type|Default value|Description|
+|----|----|-------------|-----------|
+|browse_everywhere_limit_per_anchor|`Integer`:bytes|`1024`|This is the current amount of memory that each Browse Everywhere anchor will consume.|
+|default_temp_file_path|`String`|`'C:\\ProgramData\\Alteryx\\Engine'`|The path where temporary files used in processed workflows and apps will be placed. This setting should point to a location that is safe to write large amounts of files.|
+|log_file_path|`String`|`'C:\\ProgramData\\Alteryx\\Engine'`|Each time a workflow or app is run, output logs are produced. These logs will be written to the directory specified in this setting. A blank logging directory will disable logging.|
+|num_threads|`Integer`|`nil`|Some tools and operations can take advantage of multiple processing threads. Generally, this value should not be changed, and the default value is the number of available processor cores plus one.|
+|package_staging_path|`String`|`'C:\\ProgramData\\Alteryx\\Engine\\Staging'`|Each time a workflow or app is run, output logs are produced. These logs will be written to the directory specified in this setting. A blank logging directory will disable logging.|
+|proxy_configuration|`String`|`nil`|If present, proxy server configuration used by Download tool.|
+|run_at_lower_priority|`Boolean`|`false`|If `true`, run Engine process at a lower system priority level (recommended to ensure AlteryxService functionality under high Engine load).|
+|sort_join_memory|`Integer`|`0`|This is the minimum amount of memory that the Engine will consume while performing operations such as Sorts and Joins within a workflow or app. Generally, this value should not be changed. `0` is unlimited.|
+|user_alias_override|`Boolean`|`false`|With this option, any user alias that is specified in the Alias Repository can take priority over a system alias.|
+|user_lock_down|`Boolean`|`false`|If `false`, allow user settings to override temp path and memory settings, otherwise use system settings.|
+
+######`gallery` options
+The following contains available options and descriptions for child settings under the `gallery` attribute.
+|Name|Type|Default value|Description|
+|----|----|-------------|-----------|
+|authentication_type|`String`|`'BuiltIn'`|`'BuiltIn'`, `'Windows'`, or `'Kerberos'`<br/><br/>Alteryx Server supports built-in authentication as well as Integrated Windows Authentication either with or without Kerberos support. `BuiltIn` authentication uses email address and passwords to log in, while the `Windows` and `Kerberos` options utilize your internal network credentials.<br/><br/>**Note:** Once an authentication type has been selected, it should not be changed. Changing it may cause technical problems.|
+|base_address|`String`|`'http://localhost/gallery/'`|This is the URL that users will go to when they visit the Gallery. Although the domain configuration must be done elsewhere, this setting is used in areas such as email content when links to workflows are made available.<br/><br/>If SSL is enabled and your listener is on a port other than 443, be sure to specify the port in this setting (ex. https://localhost:445/alteryxcloud)|
+|default_gallery_admin_user_name|`String`|`nil`|To manage users, workflows, etc., an administrator account must be created. If `authentication_type` is set to `BuiltIn`, enter the email address of the administrator (ex. me@example.com). If `authentication_type` is set to `Windows` or `Kerberos`, specify the user account (ex. Domain\Username).|
+|default_run_mode|`String`|`'Unrestricted'`|`'Unrestricted'`, `'Semi Safe'`, or `'Safe'`<br/><br/>Workflows in the Server can be configured to run with certain permissions, limiting or allowing certain tools in the workflow to be used. To prevent potentially malicious workflows from being executed, set this to `'Safe'`. Lowering the restriction will allow tools, such as the Run Command Tool, to be used in Workflows.|
+|elastic_search_index_name|`String`|`'alteryx-gallery'`|Only needed if `search_provider` is set to `Elasticsearch`. Name of the Elasticsearch database.|
+|elastic_search_url|`String`|`nil`|Only needed if `search_provider` is set to `Elasticsearch`. URL of the Elasticsearch provider.|
+|logging_path|`String`|`'C:\\ProgramData\\Alteryx\\Gallery\\Logs'`|Full path to log directory.|
+|mongo_db_search_connection|`String`|`nil`|Full MongoDB connection string used for Search database, e.g., `mongodb://user:pass@host/Alteryx_Lucene`.|
+|mongo_db_search_database_name|`String`|`'AlteryxGallery_Lucene'`|Name of Search database in MongoDB instance.|
+|mongo_db_search_override|`Boolean`|`false`|If `true`, use MongoDBSearchConnection otherwise build connection string from search parameters (`mongo_db_search_database_name`, `mongo_db_search_password_encrypted`, `mongo_db_search_server_name`, and `mongo_db_search_user_name`).  If `false`, use Controller connection info.|
+|mongo_db_search_password_encrypted|`String`|`nil`|If using auth on MongoDB, encrypted MongoDB password used for Search database.|
+|mongo_db_search_server_name|`String`|`nil`|MongoDB Search server name as `host:port`.|
+|mongo_db_search_user_name|`String`|`nil`|If using auth on MongoDB, user name used for Search database. e.g., `mongodb://user:pass@host/AlteryxGallery`.|
+|mongo_db_web_connection|`String`|`nil`|Full MongoDB connection string used for Gallery database.|
+|mongo_db_web_database_name|`String`|`'AlteryxGallery'`|Name of Gallery database in MongoDB instance.|
+|mongo_db_web_override|`Boolean`|`false`|If `true`, use MongoDBWebConnection otherwise build connection string from web parameters (`mongo_db_web_database_name`, `mongo_db_web_password_encrypted`, `mongo_db_web_server_name`, and `mongo_db_web_user_name`).  If `false`, use Controller connection info.|
+|mongo_db_web_password_encrypted|`String`|`nil`|If using auth on MongoDB, encrypted MongoDB password used for Gallery database.|
+|mongo_db_web_server_name|`String`|`nil`|MongoDB Gallery server name as `host:port`.|
+|mongo_db_web_user_name|`String`|`nil`|If using auth on MongoDB, valid username for Gallery database.|
+|search_provider|`String`|`'Lucene'`|`'Lucene'` or `'Elasticsearch'`<br/><br/>Name of the search engine used by the Gallery.|
+|smtp_email|`String`|`nil`|Email address used to send Gallery email alerts.|
+|smtp_enabled|`Boolean`|`true`|If `true`, enable email events on the Gallery, otherwise disable.|
+|smtp_password_encrypted|`String`|`nil`|Encrypted password used to log into SMTP server when sending Gallery email alerts. Set using `smtp_password` in the `secrets` property of the `alteryx_server_runtimesettings` resource.|
+|smtp_port|`Integer`|`25`|Port on SMTP server used to send Gallery email alerts.|
+|smtp_server_name|`String`|`nil`|SMTP server name used for Gallery email alerts.|
+|smtp_ssl_enabled|`Boolean`|`false`|If `true`, enable SSL for SMTP connections, otherwise disable.|
+|smtp_user_name|`String`|`nil`|Username used to log into to SMTP server when sending Gallery email alerts.|
+|ssl_enabled|`Boolean`|`false`|If `true`, enable SSL connections from Client to Gallery (https), otherwise use http connections.|
+|working_path|`String`|`'C:\\ProgramData\\Alteryx\\Gallery'`|The workspace is where the Gallery will write any necessary temporary files. This setting should point to a location that is safe to write large amounts of files.|
+
+######`worker` options
+The following contains available options and descriptions for child settings under the `worker` attribute.
+|Name|Type|Default value|Description|
+|----|----|-------------|-----------|
+|execute_domain|`String`|`nil`|The optional domain for the provided username that will be used to run the Engine on the Queue Worker.|
+|execute_password_encrypted|`String`|`nil`|The encrypted password corresponding to the user that will run the Engine on the Queue Worker.|
+|execute_user_name|`String`|`nil`|If non-empty, the username that will be used to run the Engine on the Queue Worker.|
+|quality_of_service_min|`Integer`|`0`|`0-9`: Quality of Service is used to manage resource allocation in a multi-node deployment. For normal operation, leave this setting at 0.|
+|queue_worker_enabled|`Boolean`|`true`|Enabling this machine to run scheduled Alteryx workflows will allow it to take requests to run workflows from the Scheduler or from the Gallery. In multi-node deployments, you may want to set this attribute to `false` if you have another machine that will be running workflows.|
+|render_worker_count|`Integer`|`2`|The number of Render Workers to run on this node (the number of `AlteryxService_RenderWorker.exe` executables).|
+|render_worker_enabled|`Boolean`|`true`|Enabling this machine to act as a Map Worker will allow it to render map tiles for Map Questions and the Map Input Tool. In multi-node deployments, you may want to set this attribute to `false` if you have another machine that will process map tile requests, and if this one will be dedicated to running scheduled workflows.|
+|server_name|`String`|`nil`|The Controller as `server:port` to which this worker connects.|
+|server_secret_encrypted|`String`|`nil`|The encrypted server secret corresponding to the current Controller. Set using `remote_secret` in the `secrets` property of the `alteryx_server_runtimesettings` resource.|
+|sort_join_memory|`Integer`|`0`|Enabling this machine to act as a Map Worker will allow it to render map tiles for Map Questions and the Map Input Tool. In multi-node deployments, you may want to uncheck this option if you have another machine that will process map tile requests, and if this one will be dedicated to running scheduled workflows. `0` is unlimited.|
+|staging_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\Staging'`|Path to staging directory. Location where packages are unpacked for execution by a compute slave etc etc.|
+|thread_count|`Integer`|`1`|This is the maximum number of workflows that are allowed to run simultaneously on this machine. Your license may already have a limitation, and setting this to a number higher than the license may result in errors.|
+|timeout|`Integer`:sec|`0`|If you do not want jobs to run for an extended period of time, you can use this setting to force jobs to cancel after a certain amount of time has passed. This will help to free up system resources that might otherwise be taken up by unintentionally long running jobs. `0` is unlimited.|
+|use_local_server|`Boolean`|`true`|If `true`, default to using localhost:80 as the server and retrieve server secret.  Otherwise, use provided server and server secret.|
 
 Testing
 -------
