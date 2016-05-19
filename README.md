@@ -137,7 +137,7 @@ end
 
 ```ruby
 # Enable and start the AlteryxService.
-alteryx_server_service 'AlteryxService do
+alteryx_server_service 'AlteryxService' do
   action [:enable, :start]
 end
 ```
@@ -173,7 +173,7 @@ Configure RuntimeSettings overrides.
 #### Attributes
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
-|config           |Hash   |`node['alteryx']['runtimesettings'] = { 'engine' => { 'num_threads' => node['cpu']['total'] + 1,'sort_join_memory' =>  (node['kernel']['os_info']['total_visible_memory_size'].to_i * 0.8 / 1024 / (node['cpu']['total'] + 1)).to_i }}`|**Optional**: Configure RuntimeSettings.xml given a hash of settings. `num_threads` is set to the number of cores plus one. `sort_join_memory` is set to 80% of the total memory divided by `num_threads`.|
+|config           |Hash   |`node['alteryx']['runtimesettings'] = {`<br/>  `'engine' => { 'num_threads' => node['cpu']['total'] + 1,`<br/>  `'sort_join_memory' =>`<br/>    `(node['kernel']['os_info']['total_visible_memory_size'].to_i`<br/>      `* 0.8 / 1024 / (node['cpu']['total'] + 1)).to_i } }`|**Optional**: Configure RuntimeSettings.xml given a hash of settings. `num_threads` is set to the number of cores plus one. `sort_join_memory` is set to 80% of the total memory divided by `num_threads`.|
 |restart_on_change|Boolean|`node['alteryx']['restart_on_config_change'] = false`|**Optional**: Restart the AlteryxService service when RuntimeSettings.xml has changed.|
 |secrets          |Hash   |`nil`|**Optional**: A hash of secrets/passwords to be encrypted. See the examples section below for valid options.<br/><br/>By default we set this to `nil` instead of a `node` attribute as these values should be stored securely. Look at encrypted databags, chef-vault, citadel and others.|
 
@@ -212,8 +212,9 @@ alteryx_server_runtimesettings 'Configure RuntimeSettings' do
 end
 ```
 #### Options
-######`controller` options
+##### `controller` options
 The following contains available options and descriptions for child settings under the `controller` attribute.
+
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
 |cleanup_queue_inputs_time_to_live|`Integer`:min|`0`|The age of queue input items (uploaded files) before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
@@ -241,8 +242,9 @@ The following contains available options and descriptions for child settings und
 |sqlite_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\Persistence'`|Necessary only if you are using SQLite. The root path is the location where database files should be stored.|
 |web_interface_staging_path|`String`|`alteryx['runtimesettings']['worker']['staging_path']`|The web interface staging path is the location where the Controller will write any necessary temporary or cache files. This setting should point to a location that is safe to write large amounts of files.|
 
-######`engine` options
+##### `engine` options
 The following contains available options and descriptions for child settings under the `engine` attribute.
+
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
 |browse_everywhere_limit_per_anchor|`Integer`:bytes|`1024`|This is the current amount of memory that each Browse Everywhere anchor will consume.|
@@ -256,8 +258,9 @@ The following contains available options and descriptions for child settings und
 |user_alias_override|`Boolean`|`false`|With this option, any user alias that is specified in the Alias Repository can take priority over a system alias.|
 |user_lock_down|`Boolean`|`false`|If `false`, allow user settings to override temp path and memory settings, otherwise use system settings.|
 
-######`gallery` options
+##### `gallery` options
 The following contains available options and descriptions for child settings under the `gallery` attribute.
+
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
 |authentication_type|`String`|`'BuiltIn'`|`'BuiltIn'`, `'Windows'`, or `'Kerberos'`<br/><br/>Alteryx Server supports built-in authentication as well as Integrated Windows Authentication either with or without Kerberos support. `BuiltIn` authentication uses email address and passwords to log in, while the `Windows` and `Kerberos` options utilize your internal network credentials.<br/><br/>**Note:** Once an authentication type has been selected, it should not be changed. Changing it may cause technical problems.|
@@ -290,8 +293,9 @@ The following contains available options and descriptions for child settings und
 |ssl_enabled|`Boolean`|`false`|If `true`, enable SSL connections from Client to Gallery (https), otherwise use http connections.|
 |working_path|`String`|`'C:\\ProgramData\\Alteryx\\Gallery'`|The workspace is where the Gallery will write any necessary temporary files. This setting should point to a location that is safe to write large amounts of files.|
 
-######`worker` options
+##### `worker` options
 The following contains available options and descriptions for child settings under the `worker` attribute.
+
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
 |execute_domain|`String`|`nil`|The optional domain for the provided username that will be used to run the Engine on the Queue Worker.|
