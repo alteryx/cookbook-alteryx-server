@@ -36,7 +36,7 @@ action :manage do
     next unless overrides[top]
     overrides[top].delete_if do |k, v|
       d = defaults[top][k].to_s
-      default = d == 'True' || d == 'False' ? d.downcase : d
+      default = (d == 'True' || d == 'False') ? d.downcase : d
       v.to_s == default
     end
   end

@@ -304,14 +304,13 @@ module AlteryxServer
     #
     # Return true if there secrets that need to be encrypted, false otherwise.
     def self.secrets_unencrypted?(current, new)
-      unencrypted = false
       new.each do |new_k, _new_v|
         key_pair = CONVERSIONS[new_k]
         k = key_pair.keys.first
         v = key_pair.values.first
         return true if current[k].nil? || current[k][v].nil?
       end
-      unencrypted
+      false
     end
   end
 end

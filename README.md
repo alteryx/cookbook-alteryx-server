@@ -137,7 +137,7 @@ end
 
 ```ruby
 # Enable and start the AlteryxService.
-alteryx_server_service 'AlteryxService do
+alteryx_server_service 'AlteryxService' do
   action [:enable, :start]
 end
 ```
@@ -173,7 +173,7 @@ Configure RuntimeSettings overrides.
 #### Attributes
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
-|config           |Hash   |`node['alteryx']['runtimesettings'] = { 'engine' => { 'num_threads' => node['cpu']['total'] + 1,'sort_join_memory' =>  (node['kernel']['os_info']['total_visible_memory_size'].to_i * 0.8 / 1024 / (node['cpu']['total'] + 1)).to_i }}`|**Optional**: Configure RuntimeSettings.xml given a hash of settings. `num_threads` is set to the number of cores plus one. `sort_join_memory` is set to 80% of the total memory divided by `num_threads`.|
+|config           |Hash   |`node['alteryx']['runtimesettings'] = {`<br/>  `'engine' => { 'num_threads' => node['cpu']['total'] + 1,`<br/>  `'sort_join_memory' =>`<br/>    `(node['kernel']['os_info']['total_visible_memory_size'].to_i`<br/>      `* 0.8 / 1024 / (node['cpu']['total'] + 1)).to_i } }`|**Optional**: Configure RuntimeSettings.xml given a hash of settings. `num_threads` is set to the number of cores plus one. `sort_join_memory` is set to 80% of the total memory divided by `num_threads`.|
 |restart_on_change|Boolean|`node['alteryx']['restart_on_config_change'] = false`|**Optional**: Restart the AlteryxService service when RuntimeSettings.xml has changed.|
 |secrets          |Hash   |`nil`|**Optional**: A hash of secrets/passwords to be encrypted. See the examples section below for valid options.<br/><br/>By default we set this to `nil` instead of a `node` attribute as these values should be stored securely. Look at encrypted databags, chef-vault, citadel and others.|
 
@@ -212,25 +212,26 @@ alteryx_server_runtimesettings 'Configure RuntimeSettings' do
 end
 ```
 #### Options
-######`controller` options
+##### `controller` options
 The following contains available options and descriptions for child settings under the `controller` attribute.
+
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
-|cleanup_queue_inputs_time_to_live|`Integer`:min|`0`|The age of queue input items (uploaded files) before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
-|cleanup_queue_time_to_live|`Integer`:min|`0`|The age of queue items and results before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
-|cleanup_scheduler_time_to_live|`Integer`:min|`0`|The age of scheduler items before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
+|cleanup_queue_inputs_time_to_live|`Integer`(min)|`0`|The age of queue input items (uploaded files) before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
+|cleanup_queue_time_to_live|`Integer`(min)|`0`|The age of queue items and results before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
+|cleanup_scheduler_time_to_live|`Integer`(min)|`0`|The age of scheduler items before `Time.now` to remove. Tuning this setting may help to reduce the amount of drive space necessary as the system is used.|
 |controller_enabled|`Boolean`|`true`|`true` if this node is the Controller, `false` if not. Only run one Controller per Server.|
 |embedded_mongo_db_enabled|`Boolean`|`false`|`true` if Embedded MongoDB is enabled (default for Private Server), `false` if using SQLite or User-managed MongoDB.|
 |embedded_mongo_db_root_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\Persistence\\Mongo'`|Necessary only if you are using Embedded MongoDB. The root path is the location where database files should be stored.|
 |gallery_enabled|`Boolean`|`false`|`true` if this node is a Gallery, `false` otherwise.|
 |logging_enabled|`Boolean`|`false`|If `true`, logging is enabled otherwise logging disabled.|
-|logging_file_max_size|`Integer`:mb|`10`|Approximate log file size before rotating.|
+|logging_file_max_size|`Integer`(mb)|`10`|Approximate log file size before rotating.|
 |logging_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\AlteryxServiceLog.log'`|Full path to log file.|
 |logging_rotation_enabled|`Boolean`|`true`|If `true`, rotate log file when it reaches approximate size limit.|
 |logging_severity_threshold|`Integer`|`6`|`0-7`: Minimum Syslog logging level, suggested is minimum `5`, `7` is Debug (highest).|
-|map_tile_disk_cache_max_size|`Integer`:mb|`1024`|This is the maximum amount of space to consume for caching tiles on the hard drive. A higher disk cache will result in greater consumption of drive space, but may increase performance of map tile requests.|
+|map_tile_disk_cache_max_size|`Integer`(mb)|`1024`|This is the maximum amount of space to consume for caching tiles on the hard drive. A higher disk cache will result in greater consumption of drive space, but may increase performance of map tile requests.|
 |map_tile_mem_cache_max_size|`Integer`|`10000`|This is the maximum number of map tiles that will be stored in memory. 1,000 tiles will require roughly 450MB of memory. A higher memory cache will result in more tiles being stored to increase performance, but will require more system resources.|
-|map_tile_reference_layers_time_to_live|`Integer`:sec|`86400`|The amount of time to persist reference layer information. Increasing this number may help optimize performance of frequently requested layers. If a reference layer expires, it will be generated again the next time it is requested.|
+|map_tile_reference_layers_time_to_live|`Integer`(sec)|`86400`|The amount of time to persist reference layer information. Increasing this number may help optimize performance of frequently requested layers. If a reference layer expires, it will be generated again the next time it is requested.|
 |mongo_db_database_name|`String`|`nil`|Name of the Service database in User-managed MongoDB instance.|
 |mongo_db_enabled|`Boolean`|`false`|If `true` use User-managed MongoDB, otherwise use either (Embedded MongoDB or SQLite).|
 |mongo_db_password_encrypted|`String`|`nil`|If using auth on MongoDB, encrypted MongoDB password. Set using `mongo_password` in the `secrets` property of the `alteryx_server_runtimesettings` resource.|
@@ -241,11 +242,12 @@ The following contains available options and descriptions for child settings und
 |sqlite_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\Persistence'`|Necessary only if you are using SQLite. The root path is the location where database files should be stored.|
 |web_interface_staging_path|`String`|`alteryx['runtimesettings']['worker']['staging_path']`|The web interface staging path is the location where the Controller will write any necessary temporary or cache files. This setting should point to a location that is safe to write large amounts of files.|
 
-######`engine` options
+##### `engine` options
 The following contains available options and descriptions for child settings under the `engine` attribute.
+
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
-|browse_everywhere_limit_per_anchor|`Integer`:bytes|`1024`|This is the current amount of memory that each Browse Everywhere anchor will consume.|
+|browse_everywhere_limit_per_anchor|`Integer`(bytes)`1024`|This is the current amount of memory that each Browse Everywhere anchor will consume.|
 |default_temp_file_path|`String`|`'C:\\ProgramData\\Alteryx\\Engine'`|The path where temporary files used in processed workflows and apps will be placed. This setting should point to a location that is safe to write large amounts of files.|
 |log_file_path|`String`|`'C:\\ProgramData\\Alteryx\\Engine'`|Each time a workflow or app is run, output logs are produced. These logs will be written to the directory specified in this setting. A blank logging directory will disable logging.|
 |num_threads|`Integer`|`nil`|Some tools and operations can take advantage of multiple processing threads. Generally, this value should not be changed, and the default value is the number of available processor cores plus one.|
@@ -256,8 +258,9 @@ The following contains available options and descriptions for child settings und
 |user_alias_override|`Boolean`|`false`|With this option, any user alias that is specified in the Alias Repository can take priority over a system alias.|
 |user_lock_down|`Boolean`|`false`|If `false`, allow user settings to override temp path and memory settings, otherwise use system settings.|
 
-######`gallery` options
+##### `gallery` options
 The following contains available options and descriptions for child settings under the `gallery` attribute.
+
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
 |authentication_type|`String`|`'BuiltIn'`|`'BuiltIn'`, `'Windows'`, or `'Kerberos'`<br/><br/>Alteryx Server supports built-in authentication as well as Integrated Windows Authentication either with or without Kerberos support. `BuiltIn` authentication uses email address and passwords to log in, while the `Windows` and `Kerberos` options utilize your internal network credentials.<br/><br/>**Note:** Once an authentication type has been selected, it should not be changed. Changing it may cause technical problems.|
@@ -290,8 +293,9 @@ The following contains available options and descriptions for child settings und
 |ssl_enabled|`Boolean`|`false`|If `true`, enable SSL connections from Client to Gallery (https), otherwise use http connections.|
 |working_path|`String`|`'C:\\ProgramData\\Alteryx\\Gallery'`|The workspace is where the Gallery will write any necessary temporary files. This setting should point to a location that is safe to write large amounts of files.|
 
-######`worker` options
+##### `worker` options
 The following contains available options and descriptions for child settings under the `worker` attribute.
+
 |Name|Type|Default value|Description|
 |----|----|-------------|-----------|
 |execute_domain|`String`|`nil`|The optional domain for the provided username that will be used to run the Engine on the Queue Worker.|
@@ -306,7 +310,7 @@ The following contains available options and descriptions for child settings und
 |sort_join_memory|`Integer`|`0`|Enabling this machine to act as a Map Worker will allow it to render map tiles for Map Questions and the Map Input Tool. In multi-node deployments, you may want to uncheck this option if you have another machine that will process map tile requests, and if this one will be dedicated to running scheduled workflows. `0` is unlimited.|
 |staging_path|`String`|`'C:\\ProgramData\\Alteryx\\Service\\Staging'`|Path to staging directory. Location where packages are unpacked for execution by a compute slave etc etc.|
 |thread_count|`Integer`|`1`|This is the maximum number of workflows that are allowed to run simultaneously on this machine. Your license may already have a limitation, and setting this to a number higher than the license may result in errors.|
-|timeout|`Integer`:sec|`0`|If you do not want jobs to run for an extended period of time, you can use this setting to force jobs to cancel after a certain amount of time has passed. This will help to free up system resources that might otherwise be taken up by unintentionally long running jobs. `0` is unlimited.|
+|timeout|`Integer`(sec)|`0`|If you do not want jobs to run for an extended period of time, you can use this setting to force jobs to cancel after a certain amount of time has passed. This will help to free up system resources that might otherwise be taken up by unintentionally long running jobs. `0` is unlimited.|
 |use_local_server|`Boolean`|`true`|If `true`, default to using localhost:80 as the server and retrieve server secret.  Otherwise, use provided server and server secret.|
 
 Testing
@@ -318,3 +322,22 @@ From the root of the repository, run `rspec .` to execute the unit tests.
 
 ### Integration tests
 Use the included `.kitchen.yml` file as a base and add customizations to `.kitchen.local.yml` to create an instance in test-kitchen. Run `kitchen verify` to execute the integration tests.
+
+License
+-------
+This software is licensed under the Apache 2 license, quoted below.
+
+    Copyright (c) 2016 Alteryx, Inc. <http://www.alteryx.com/>
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
