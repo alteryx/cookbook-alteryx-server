@@ -19,8 +19,21 @@ action :manage do
   # Get default RTS settings and store in a Mash.
   defaults = helpers.parse_rts(defaults_path)
 
-  rts_defaults = node['alteryx']['runtimesettings']
-  new_resource.config(rts_defaults) unless new_resource.config
+  # If we have both node attributes and parameters from the config attribute
+  # we'll merge them together.
+  rts_defaults = {}
+  rts_defaults.merge!(node['alteryx']['runtimesettings'])
+  if rts_defaults && new_resource.config
+    keys = (rts_defaults.keys + new_resource.config.keys).uniq
+    keys.each do |key|
+      if rts_defaults.key?(key) && new_resource.config.key?(key)
+        rts_defaults[key].merge!(new_resource.config[key])
+      elsif rts_defaults.key?(!(key)) && new_resource.config.key?(key)
+        rts_defaults[key] = new_resource.config[key]
+      end
+    end
+  end
+  new_resource.config(rts_defaults) if rts_defaults
 
   # Merge user-supplied override settings onto stored
   # secret/passwords Mash.
@@ -50,6 +63,7 @@ action :manage do
     source 'RuntimeSettings.xml.erb'
     variables config: overrides
     notifies :restart, 'service[AlteryxService]', :delayed if restart_svc
+    cookbook 'alteryx-server'
   end
 
   # Generate secrets if:
