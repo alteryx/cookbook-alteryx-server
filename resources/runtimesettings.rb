@@ -28,7 +28,7 @@ action :manage do
     keys.each do |key|
       if rts_defaults.key?(key) && new_resource.config.key?(key)
         rts_defaults[key].merge!(new_resource.config[key])
-      elsif rts_defaults.key?(!(key)) && new_resource.config.key?(key)
+      elsif !rts_defaults.key?(key) && new_resource.config.key?(key)
         rts_defaults[key] = new_resource.config[key]
       end
     end
