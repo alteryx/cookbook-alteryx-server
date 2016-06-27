@@ -8,7 +8,8 @@ require 'spec_helper'
 
 describe 'alteryx-server::default' do
   context 'When all attributes are default, on Windows' do
-    RTS_OVERRIDES_PATH = './spec/unit/files/RuntimeSettings-overrides.xml'
+    RTS_OVERRIDES_PATH = './spec/unit/files/'\
+                         'RuntimeSettings-overrides.xml'.freeze
     let(:chef_run) do
       lwrps = %w(alteryx_server_package
                  alteryx_server_r_package
@@ -36,7 +37,7 @@ describe 'alteryx-server::default' do
     end
 
     it 'Installs Alteryx Server' do
-      expect(chef_run).to install_package('Alteryx 10.5 x64')
+      expect(chef_run).to install_package('Alteryx 10.6 x64')
     end
 
     it 'Installs R Predictive Tools' do

@@ -4,11 +4,11 @@ exit_status=0
 exit_message="Pre-commit errors:\n"
 errors=()
 
-echo 'Running rubocop'
+echo 'Running cookstyle'
 echo '---'
 
-if ! rubocop .; then
-  errors+=(rubocop)
+if ! cookstyle .; then
+  errors+=(cookstyle)
   exit_status=1
 fi
 

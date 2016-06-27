@@ -18,7 +18,7 @@ def activate_license(type, license_address)
     exe = 'C:\\Program Files\\Alteryx\\bin\\bin32\\SrcLicenseManager.exe'
     cmd = "\"#{exe}\" /InstallSrcLc \"#{license}\""
   else
-    fail 'Invalid license type.'
+    raise 'Invalid license type.'
   end
 
   cmd
