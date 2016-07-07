@@ -9,7 +9,7 @@ Requirements
 
 Recipes
 -------
-Resources are the intended way to consume this cookbook, however we've provided a single recipe that installs and configures a standalone server.
+Resources are the intended way to consume this cookbook, however we've provided a couple of example recipes that install, configure, and license a standalone server.
 
 ### default
 

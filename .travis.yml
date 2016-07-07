@@ -1,0 +1,10 @@
+---
+language: ruby
+env:
+  global:
+    - RUBYOPT='-W0'
+
+install:
+  - bundle install
+
+script: rake cookbook:all

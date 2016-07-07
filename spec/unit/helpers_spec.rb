@@ -150,3 +150,5 @@ describe '#secrets_unencrypted?' do
     expect(helpers.secrets_unencrypted?(current, @new)).to be true
   end
 end
+
+at_exit { ChefSpec::Coverage.report! }
