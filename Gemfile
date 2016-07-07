@@ -5,5 +5,6 @@ group :develop do
   gem 'chefspec', '~> 4.7.0'
   gem 'foodcritic', '~> 6.0.0'
   gem 'rack', '~> 1.6.0'
+  gem 'berkshelf'
   gem 'rake'
 end
