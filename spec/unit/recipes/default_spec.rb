@@ -18,7 +18,7 @@ describe 'alteryx-server::default' do
                  alteryx_server_service)
       runner = ChefSpec::SoloRunner.new(
         platform: 'windows',
-        version: '2012r2',
+        version: '2012R2',
         step_into: lwrps) do |node|
           node.automatic['cpu']['total'] = 2
           node.automatic['kernel']['os_info']['total_visible_memory_size'] =
