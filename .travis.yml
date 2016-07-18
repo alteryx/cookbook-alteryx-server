@@ -9,4 +9,4 @@ env:
 install:
   - bundle install
 
-script: rake cookbook:all
+script: rake travis
