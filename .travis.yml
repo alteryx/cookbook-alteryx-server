@@ -1,5 +1,7 @@
 ---
 language: ruby
+rvm:
+  - 2.2
 env:
   global:
     - RUBYOPT='-W0'
