@@ -1,5 +1,7 @@
 alteryx-server Cookbook
 ================================
+[![Build Status](https://travis-ci.org/alteryx/cookbook-alteryx-server.svg?branch=master)](https://travis-ci.org/alteryx/cookbook-alteryx-server) [![Cookbook Version](https://img.shields.io/cookbook/v/alteryx-server.svg)](https://supermarket.chef.io/cookbooks/alteryx-server)
+
 A Chef cookbook to install and configure Alteryx Server.
 
 Requirements
