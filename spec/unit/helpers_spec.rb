@@ -79,7 +79,7 @@ describe '#lookup_resource' do
   it 'Should be able to create resources' do
     runner = ChefSpec::SoloRunner.new(
       platform: 'windows',
-      version: '2012r2'
+      version: '2012R2'
     )
     runner.converge('alteryx-server::default')
 
@@ -150,3 +150,5 @@ describe '#secrets_unencrypted?' do
     expect(helpers.secrets_unencrypted?(current, @new)).to be true
   end
 end
+
+at_exit { ChefSpec::Coverage.report! }

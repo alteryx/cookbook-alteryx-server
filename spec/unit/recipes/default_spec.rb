@@ -18,7 +18,7 @@ describe 'alteryx-server::default' do
                  alteryx_server_service)
       runner = ChefSpec::SoloRunner.new(
         platform: 'windows',
-        version: '2012r2',
+        version: '2012R2',
         step_into: lwrps) do |node|
           node.automatic['cpu']['total'] = 2
           node.automatic['kernel']['os_info']['total_visible_memory_size'] =
@@ -40,16 +40,22 @@ describe 'alteryx-server::default' do
       expect(chef_run).to install_package('Alteryx 10.6 x64')
     end
 
+    it 'Sends the install action to alteryx_server_package' do
+      expect(chef_run).to install_alteryx_server_package('Alteryx Server')
+    end
+
     it 'Installs R Predictive Tools' do
       expect(chef_run).to install_windows_package(
         'Alteryx Predictive Tools with R 3.2.3'
       )
     end
 
+    it 'Sends the install action to alteryx_server_r_package' do
+      expect(chef_run).to install_alteryx_server_r_package('R Predictive Tools')
+    end
+
     it 'Enables the AlteryxService' do
-      # Due to some wonkiness in how ChefSpec populates the resource collection
-      # on this one, it's probably better to leave this to integration tests.
-      expect(true).to be true
+      expect(chef_run).to enable_alteryx_server_service('AlteryxService')
     end
 
     it 'Renders RuntimeSettings.xml' do
@@ -66,6 +72,12 @@ describe 'alteryx-server::default' do
         </SystemSettings>
       EOH
       expect(chef_run).to render_file(RTS_OVERRIDES_PATH).with_content(content)
+    end
+
+    it 'Sends the manage action to alteryx_server_runtimesettings' do
+      expect(chef_run).to(
+        manage_alteryx_server_runtimesettings('RuntimeSettings.xml')
+      )
     end
   end
 end

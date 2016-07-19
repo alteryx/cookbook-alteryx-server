@@ -1,3 +1,4 @@
 .kitchen.local.yml
 .kitchen/
 Berksfile.lock
+Gemfile.lock
