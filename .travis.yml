@@ -9,4 +9,4 @@ env:
 install:
   - bundle install
 
-script: rake travis
+script: rake default

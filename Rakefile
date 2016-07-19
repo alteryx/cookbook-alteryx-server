@@ -25,14 +25,5 @@ namespace :unit do
 end
 task unit: %w(unit:spec)
 
-namespace :integration do
-  desc 'Run integration tests'
-  require 'kitchen/rake_tasks'
-  Kitchen::RakeTasks.new
-end
-task integration: %w(integration:kitchen:all)
-
 desc 'Default tests'
 task default: %w(unit style)
-
-task travis: %w(unit style integration:kitchen:default-windows-2012r2)
