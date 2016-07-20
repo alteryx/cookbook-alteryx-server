@@ -1,11 +1,11 @@
-require 'spec_helper'
-
 describe package('Alteryx 10.6 x64') do
-  it { should be_installed.with_version('10.6.8.17850') }
+  it { should be_installed }
+  its('version') { should eq '10.6.8.17850' }
 end
 
 describe package('Alteryx Predictive Tools with R 3.2.3') do
-  it { should be_installed.with_version('3.2.3') }
+  it { should be_installed }
+  its('version') { should eq '3.2.3' }
 end
 
 describe service('AlteryxService') do

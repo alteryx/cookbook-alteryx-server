@@ -1,1 +1,0 @@
-../../default/serverspec/default_spec.rb
