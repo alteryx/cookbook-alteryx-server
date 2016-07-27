@@ -8,4 +8,9 @@ group :develop do
   gem 'rack', '~> 1.6.0'
   gem 'berkshelf'
   gem 'rake'
+  gem 'stove'
+end
+
+group :integration do
+  gem 'test-kitchen'
 end

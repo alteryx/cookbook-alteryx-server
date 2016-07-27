@@ -25,5 +25,27 @@ namespace :unit do
 end
 task unit: %w(unit:spec)
 
-desc 'Default tests'
+namespace :integration do
+  begin
+    desc 'Run integration tests'
+    require 'kitchen/rake_tasks'
+    Kitchen::RakeTasks.new
+  rescue LoadError
+    puts '>>>>> test-kitchen gem not loaded, omitting tasks.' unless ENV['CI']
+  end
+end
+task integration: %w(integration:kitchen:all)
+
+namespace :stove do
+  require 'stove/rake_task'
+  Stove::RakeTask.new
+end
+task publish: 'stove:publish'
+
+desc 'Default tasks (unit & style)'
 task default: %w(unit style)
+
+desc 'All tasks'
+task all: %w(unit style integration)
+
+task travis: %w(unit style publish)

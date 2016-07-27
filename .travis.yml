@@ -1,12 +1,31 @@
 ---
 language: ruby
+cache: bundler
 rvm:
   - 2.2
 env:
   global:
     - RUBYOPT='-W0'
+    - secure: "VfJgGS5XTrKwaBmbI0Tea39n5NZD23gkLMKFS3U5cRB5IUg8h/5dTSTlurZowRJ9BlN/7S8xnlE5/2vaRHuylTattdHMJvBUglzaGVbR9Bz9yLR3aTteUIz7HglC2iV+VOwW5Ed8QuodB+Zcqkqc33UQCgKH/8MP6A5nvbPR/yNm+pPUpFMD/xgqIMv5z6WxlcLXypOh7Wr9T6P3Y0vADHoz8HezComKEdpRbzFMLgm89kkF3W3e+lRQbq+v/aVS4z535wh9xnbWd32tIIdbPoo1eDBkM6E/yFp0n4EEdvpDpJQMrpyiLzNnSeJV/v5yLpBNGaVQVfkl7UGmaxQutogu5IJDvUZnAcn22S+9rUoQwSfnDA7d/03rPoGfkPmkhHcF+dll512SdNZtFcISTuSdghUH0eWOgTtpKH57Y01jPXY/QyS8YgBZtWHtRvw19f6bYYyT5/o9XWvnJ0+f2rujBParGC3FEblmf/85E6TqN7VQ7THKkmMZMU4b44FifexvCoSPS/n9up5bqXhj4M/XDJvTUMND8SeYVBAXAEFO+TIhI0Z6361Bfa5KPa8NrCw1QgGy+5wU1MNl7hLyYoD32d8Yx98q+uhRBSi0etAfe4Npqb65jFwMNiQBEr/s6utqNwnEpqm/5oU7Y9PvrOWPtOan7Vs0V7WXAYtf/gY="
+
+branches:
+  except:
+    - /^v[0-9]\.[0-9]\.[0-9]/
+
+before_install: openssl aes-256-cbc -K $encrypted_2be821de35a9_key -iv $encrypted_2be821de35a9_iv -in secure/alteryx-devops-chef.pem.enc -out ~/alteryx-devops-chef.pem -d
 
 install:
-  - bundle install
+  - export COOKBOOK_TAG="v$(grep version metadata.rb | awk '{print $NF}' | sed "s/'//g")"
+  - bundle install --without integration
+  - git config --global credential.helper store
+  - echo "https://${GH_TOKEN}:x-oauth-basic@github.com/alteryx/cookbook-alteryx-server.git" > ~/.git-credentials
 
-script: rake default
+script: rake
+
+deploy:
+  provider: script
+  script: stove login --username alteryx_devops --key ~/alteryx-devops-chef.pem && rvm $TRAVIS_RUBY_VERSION do rake publish
+  on:
+    branch: master
+    condition: -z "$(git tag | grep $COOKBOOK_TAG)"
+    tags: false
