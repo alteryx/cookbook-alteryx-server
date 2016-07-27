@@ -24,7 +24,7 @@ script: rake
 
 deploy:
   provider: script
-  script: stove login --username alteryx_devops --key ~/alteryx-devops-chef.pem && rvm $TRAVIS_RUBY_VERSION do rake publish
+  script: rvm $TRAVIS_RUBY_VERSION do stove login --username alteryx_devops --key ~/alteryx-devops-chef.pem && rvm $TRAVIS_RUBY_VERSION do rake publish
   on:
     branch: master
     condition: -z "$(git tag | grep $COOKBOOK_TAG)"
