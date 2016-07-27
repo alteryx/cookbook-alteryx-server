@@ -47,5 +47,3 @@ task default: %w(unit style)
 
 desc 'All tasks'
 task all: %w(unit style integration)
-
-task travis: %w(unit style publish)
