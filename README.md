@@ -9,20 +9,21 @@ Requirements
 - `windows` - alteryx-server only supports the Windows platform.
 - `chef-client >= 12.7.2` - alteryx-server only supports chef-client versions of 12.7.2 or above.
 
-Recipes
--------
+Scope
+-----
 Resources are the intended way to consume this cookbook, however we've provided a couple of example recipes that install, configure, and license a standalone server.
 
-### default
+### Recipes
+
+#### default
 
 The default recipe downloads, installs, and configures Alteryx Server as well as Alteryx R Predictive Tools.
 
-### license
+#### license
 
 This recipe licenses Alteryx Server and starts AlteryxService.
 
-Limitations
------------
+### Limitations
 
 - No functionality exists to check if the desired license is already activated. Use the `node['alteryx']['license']['skip']` attribute or the `skip` property in the `alteryx_server_license` resource to skip activation.
 - `mongo_db_search_password_encrypted` and `mongo_db_web_password_encrypted` cannot be set through `secrets` property in the `alteryx_server_runtimesettings` resource. To set these connections, one either has to configure them through the configuration GUI or put them in plain text in `mongo_db_search_override` and `mongo_db_web_override`, respectively.
@@ -39,7 +40,7 @@ Install Alteryx Server.
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
 |source|String|`node['alteryx']['source'] = nil`  |**Optional**: Local path or URL<br/>The installer will download from alteryx.com using `version` unless `source` is specified.|
-|version|String|`node['alteryx']['version'] = '10.5.9.15014'`|**Required**: Full version string (10.5.9.15014, for example)|
+|version|String|`node['alteryx']['version'] = '10.6.8.17850'`|**Required**: Full version string (10.6.8.17850, for example)|
 
 #### Examples:
 
@@ -317,13 +318,11 @@ The following contains available options and descriptions for child settings und
 
 Testing
 -------
-This cookbook comes with both unit tests (ChefSpec) and integration tests (test-kitchen and ServerSpec).
+Refer to `TESTING.md`.
 
-### Unit tests
-From the root of the repository, run `rspec .` to execute the unit tests.
-
-### Integration tests
-Use the included `.kitchen.yml` file as a base and add customizations to `.kitchen.local.yml` to create an instance in test-kitchen. Run `kitchen verify` to execute the integration tests.
+Contributing
+------------
+Refer to `CONTRIBUTING.md`.
 
 License
 -------
