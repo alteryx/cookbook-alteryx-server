@@ -177,7 +177,7 @@ Configure RuntimeSettings overrides.
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
 |config           |Hash   |`node['alteryx']['runtimesettings'] = {`<br/>  `'engine' => { 'num_threads' => node['cpu']['total'] + 1,`<br/>  `'sort_join_memory' =>`<br/>    `(node['kernel']['os_info']['total_visible_memory_size'].to_i`<br/>      `* 0.8 / 1024 / (node['cpu']['total'] + 1)).to_i } }`|**Optional**: Configure RuntimeSettings.xml given a hash of settings. `num_threads` is set to the number of cores plus one. `sort_join_memory` is set to 80% of the total memory divided by `num_threads`.|
-|restart_on_change|Boolean|`node['alteryx']['restart_on_config_change'] = false`|**Optional**: Restart the AlteryxService service when RuntimeSettings.xml has changed.|
+|restart_on_change|Boolean|`node['alteryx']['restart_on_change'] = false`|**Optional**: Restart the AlteryxService service when RuntimeSettings.xml has changed.|
 |secrets          |Hash   |`nil`|**Optional**: A hash of secrets/passwords to be encrypted. See the examples section below for valid options.<br/><br/>By default we set this to `nil` instead of a `node` attribute as these values should be stored securely. Look at encrypted databags, chef-vault, citadel and others.|
 
 ##### `config` options
