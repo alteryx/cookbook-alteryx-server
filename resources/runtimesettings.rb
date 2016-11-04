@@ -10,7 +10,10 @@ action :manage do
   helpers = AlteryxServer::Helpers
   defaults_path = node['alteryx']['rts_defaults_path']
   overrides_path = node['alteryx']['rts_overrides_path']
-  restart_svc = new_resource.restart_on_change
+  restart_svc = node['alteryx']['restart_on_change']
+  unless new_resource.restart_on_change.nil?
+    restart_svc = new_resource.restart_on_change
+  end
 
   # Initialize overrides variable. Store encrypted secrets/passwords
   # from RTS overrides file into a Mash.
@@ -73,13 +76,14 @@ action :manage do
   #
   # Also, restart the service if the attribute to do so is set.
   ruby_block 'Generate secrets' do
+    service_resource = 'alteryx_server_service[AlteryxService]'
     block do
       new_resource.secrets.each do |k, v|
         setting = "set#{k.to_s.delete('_', '')}"
         shell_out("\"#{helpers::SVC_EXE}\" #{setting}=\"#{v}\"")
       end
     end
-    notifies :restart, 'service[AlteryxService]', :delayed if restart_svc
+    notifies :restart, service_resource, :delayed if restart_svc
     only_if do
       (new_resource.secrets &&
        helpers.secrets_unencrypted?(overrides, new_resource.secrets)
