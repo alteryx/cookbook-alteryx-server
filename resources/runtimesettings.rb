@@ -14,6 +14,7 @@ action :manage do
   unless new_resource.restart_on_change.nil?
     restart_svc = new_resource.restart_on_change
   end
+  service_resource = 'alteryx_server_service[AlteryxService]'
 
   # Initialize overrides variable. Store encrypted secrets/passwords
   # from RTS overrides file into a Mash.
@@ -65,7 +66,7 @@ action :manage do
   template overrides_path do
     source 'RuntimeSettings.xml.erb'
     variables config: overrides
-    notifies :restart, 'service[AlteryxService]', :delayed if restart_svc
+    notifies :restart, service_resource, :delayed if restart_svc
     cookbook 'alteryx-server'
   end
 
@@ -76,7 +77,6 @@ action :manage do
   #
   # Also, restart the service if the attribute to do so is set.
   ruby_block 'Generate secrets' do
-    service_resource = 'alteryx_server_service[AlteryxService]'
     block do
       new_resource.secrets.each do |k, v|
         setting = "set#{k.to_s.delete('_', '')}"
