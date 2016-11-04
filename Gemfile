@@ -6,9 +6,9 @@ group :develop do
   gem 'chefspec', '~> 4.7.0'
   gem 'foodcritic', '~> 6.0.0'
   gem 'rack', '~> 1.6.0'
-  gem 'berkshelf'
-  gem 'rake'
-  gem 'stove'
+  gem 'berkshelf', '~> 4.0'
+  gem 'rake', '~> 11.0'
+  gem 'stove', '~> 4.0'
 end
 
 group :integration do
