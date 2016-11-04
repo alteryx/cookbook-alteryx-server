@@ -10,7 +10,7 @@ env:
 
 branches:
   except:
-    - /^v[0-9]\.[0-9]\.[0-9]/
+    - /^v[0-9]/
 
 before_install: openssl aes-256-cbc -K $encrypted_2be821de35a9_key -iv $encrypted_2be821de35a9_iv -in secure/alteryx-devops-chef.pem.enc -out ~/alteryx-devops-chef.pem -d
 
