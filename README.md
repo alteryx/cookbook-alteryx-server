@@ -206,6 +206,11 @@ alteryx_server_runtimesettings 'Configure RuntimeSettings' do
     }
   ),
   secrets(
+    execute_user: {
+      user: node['alteryx']['runtimesettings']['worker']['execute_user_name'],
+      domain: node['alteryx']['runtimesettings']['worker']['execute_domain'],
+      password: 'somesupersecretexecutepassword'
+    },
     mongo_password: 'somesupersecretmongopassword',
     remote_secret: 'thecontrollerssecret',
     server_secret: 'thelocalserversecret',

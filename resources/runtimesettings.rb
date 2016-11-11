@@ -79,8 +79,13 @@ action :manage do
   ruby_block 'Generate secrets' do
     block do
       new_resource.secrets.each do |k, v|
-        setting = "set#{k.to_s.delete('_', '')}"
-        shell_out("\"#{helpers::SVC_EXE}\" #{setting}=\"#{v}\"")
+        setting = "set#{k.to_s.delete('_')}"
+        value = if k.to_s == 'execute_user'
+                  "#{v[:user]},#{v[:domain]},#{v[:password]}"
+                else
+                  v
+                end
+        shell_out("\"#{helpers::SVC_EXE}\" #{setting}=\"#{value}\"")
       end
     end
     notifies :restart, service_resource, :delayed if restart_svc
