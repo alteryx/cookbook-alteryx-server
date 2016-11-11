@@ -98,12 +98,13 @@ module AlteryxServer
     # Returns a properly cased and formatted XML tag.
     def self.rts_tag(name, close)
       tag = close ? '/' : ''
-      setting = name.to_s.dup
-      setting.gsub!(/[a-z0-9]+/) do |match|
-        %w(db url ipv6 sql).include?(match) ? match.upcase : match.capitalize
+      s = name.to_s.dup
+      s.gsub!(/[a-z0-9]+/) do |match|
+        c = %w(db url ipv6 sql).include?(match) && !s.include?('elastic_search')
+        c ? match.upcase : match.capitalize
       end
-      setting.delete!('_')
-      "<#{tag}#{setting}>"
+      s.delete!('_')
+      "<#{tag}#{s}>"
     end
 
     # Public: Format RTS property value correctly. For example, capitalize
