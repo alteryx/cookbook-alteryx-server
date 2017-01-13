@@ -6,6 +6,7 @@ default['alteryx']['r_version'] = nil
 default['alteryx']['restart_on_change'] = false
 default['alteryx']['source'] = nil
 default['alteryx']['version'] = '10.6.8.17850'
+default['alteryx']['latest'] = false
 default['alteryx']['runtimesettings']['engine']['num_threads'] =
   node['cpu']['total'] + 1
 default['alteryx']['runtimesettings']['engine']['sort_join_memory'] =
