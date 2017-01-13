@@ -4,6 +4,8 @@ $LOAD_PATH.unshift(
 )
 
 require 'nori'
+require 'net/http'
+require 'uri'
 
 # Module for alteryx-server Cookbook so that LWRPs stay clean
 module AlteryxServer
@@ -64,6 +66,22 @@ module AlteryxServer
       base_url = 'http://downloads.alteryx.com/Alteryx'
       sub_path = 'AlteryxServerInstallx64_'
       "#{base_url}#{version}/#{sub_path}#{version}.exe"
+    end
+
+    # Public: Parse downloads.alteryx.com/Version.xml to get latest version.
+    #
+    # No parameters.
+    #
+    # Examples
+    #
+    #   AlteryxServer::Helpers.latest_version
+    #   # => '10.6.8.17850'
+    #
+    # Returns the build number.
+    def self.latest_version
+      Net::HTTP.get(
+        URI.parse('http://downloads.alteryx.com/Version.xml')
+      )[/.*"Release" Number="([^"]*).*/, 1]
     end
 
     # Public: Construct the package name for server installs.
