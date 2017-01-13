@@ -18,13 +18,11 @@ action :install do
   package_name = AlteryxServer::Helpers.package_name(version)
   pkg_source = source
   pkg_version = version
-  pkg_latest = latest
 
   package package_name do
     source pkg_source
     options '/s'
     version pkg_version
-    latest pkg_latest
     action :install
   end
 end
