@@ -45,7 +45,7 @@ describe 'alteryx-server::default' do
     end
 
     it 'Installs R Predictive Tools' do
-      expect(chef_run).to install_windows_package(
+      expect(chef_run).to install_package(
         'Alteryx Predictive Tools with R 3.2.3'
       )
     end
