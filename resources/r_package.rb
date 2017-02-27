@@ -26,7 +26,7 @@ action :install do
   pkg_name = "Alteryx Predictive Tools with R #{version}"
   pkg_source = source
 
-  windows_package pkg_name do
+  package pkg_name do
     source pkg_source
     installer_type :custom
     options '/s'
