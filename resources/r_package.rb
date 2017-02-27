@@ -28,7 +28,6 @@ action :install do
 
   package pkg_name do
     source pkg_source
-    installer_type :custom
     options '/s'
     action :install
   end
