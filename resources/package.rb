@@ -22,3 +22,15 @@ action :install do
     action :install
   end
 end
+
+action :uninstall do
+  powershell_script 'Uninstall Alteryx' do
+    code <<-EOH
+      $product = gwmi win32_product -filter "Name LIKE 'Alteryx % x64'"
+      if ( $product ){
+        $cmd = 'C:\\ProgramData\\{0}\\AlteryxInstallx64.exe' -f $product.PackageCode
+        & $cmd /s REMOVE=TRUE MODIFY=FALSE
+      }
+      EOH
+  end
+end

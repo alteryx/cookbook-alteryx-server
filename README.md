@@ -32,7 +32,7 @@ Resources
 ---------
 
 ### alteryx_server_package
-Actions: `:install`
+Actions: `:install`, `:uninstall`
 
 Install Alteryx Server.
 
@@ -45,13 +45,21 @@ Install Alteryx Server.
 #### Examples:
 
 ```ruby
+# Install latest version of Alteryx Server
 alteryx_server_package 'Alteryx Server'
 ```
 
 ```ruby
+# Install specified version of Alteryx Server
 alteryx_server_package 'Alteryx Server' do
   source 'http://downloads.alteryx.com/Alteryx10.1.7.11834/AlteryxServerInstallx64_10.1.7.11834.exe'
   version '10.1.7.11834'
+end
+```
+```ruby
+# Uninstall Alteryx Server
+alteryx_server_package 'Alteryx Server' do
+  action :uninstall
 end
 ```
 
@@ -146,7 +154,7 @@ end
 ```
 
 ### alteryx_server_r_package
-Actions: `:install`
+Actions: `:install`, `:uninstall`
 
 Install R Predictive Tools for Alteryx Server.
 
@@ -158,13 +166,21 @@ Install R Predictive Tools for Alteryx Server.
 
 #### Examples:
 ```ruby
+# Install latest version of R Prodictive Tools
 alteryx_server_r_package 'R Predictive Tools'
 ```
 
 ```ruby
+# Install specified version of R Prodictive Tools
 alteryx_server_r_package 'R Predictive Tools' do
   source 'http://downloads.alteryx.com/Alteryx10.1.6.11313/RInstaller_10.1.6.11313.exe'
   version '3.1.3'
+end
+```
+```ruby
+# Uninstall Alteryx Server
+alteryx_server_package 'Alteryx Server' do
+  action :uninstall
 end
 ```
 
