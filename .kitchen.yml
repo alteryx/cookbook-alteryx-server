@@ -35,3 +35,7 @@ suites:
     run_list:
       - recipe[alteryx-server::default]
       - recipe[alteryx-server::license]
+  - name: uninstall
+    run_list:
+      - recipe[alteryx-server::default]
+      - recipe[alteryx-server::uninstall]

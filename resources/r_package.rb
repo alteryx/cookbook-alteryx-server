@@ -32,3 +32,16 @@ action :install do
     action :install
   end
 end
+
+action :uninstall do
+  powershell_script 'Uninstall Predictive Tools with R' do
+    code
+    <<-EOH
+      $product = gwmi win32_product -filter "Name LIKE 'Alteryx Predictive Tools with R %'"
+      if ( $product ){
+        $cmd = 'C:\\ProgramData\\{0}\\RInstaller.exe' -f $product.PackageCode
+        & $cmd /s REMOVE=TRUE MODIFY=FALSE
+      }
+      EOH
+  end
+end
