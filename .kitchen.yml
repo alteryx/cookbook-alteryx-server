@@ -20,6 +20,7 @@ platforms:
     driver:
       box: mwrock/Windows2012R2  # lightweight windows box
       communicator: winrm
+      gui: false
       customize:
         usb: "off"  # USB is disabled on this box to make it more lightweight
         vrde: "on"  # enable RDP

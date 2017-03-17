@@ -40,7 +40,7 @@ Install Alteryx Server.
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
 |source|String|`node['alteryx']['source'] = nil`  |**Optional**: Local path or URL<br/>The installer will download from alteryx.com using `version` unless `source` is specified.|
-|version|String|`node['alteryx']['version'] = '10.6.8.17850'`|**Required**: Full version string (10.6.8.17850, for example)|
+|version|String|`node['alteryx']['version'] = '11.0.3.25674'`|**Required**: Full version string (11.0.3.25674, for example)|
 
 #### Examples:
 
@@ -52,8 +52,8 @@ alteryx_server_package 'Alteryx Server'
 ```ruby
 # Install specified version of Alteryx Server
 alteryx_server_package 'Alteryx Server' do
-  source 'http://downloads.alteryx.com/Alteryx10.1.7.11834/AlteryxServerInstallx64_10.1.7.11834.exe'
-  version '10.1.7.11834'
+  source 'http://downloads.alteryx.com/Alteryx11.0.3.25674/AlteryxServerInstallx64_11.0.3.25674.exe'
+  version '11.0.3.25674'
 end
 ```
 ```ruby
@@ -173,8 +173,8 @@ alteryx_server_r_package 'R Predictive Tools'
 ```ruby
 # Install specified version of R Prodictive Tools
 alteryx_server_r_package 'R Predictive Tools' do
-  source 'http://downloads.alteryx.com/Alteryx10.1.6.11313/RInstaller_10.1.6.11313.exe'
-  version '3.1.3'
+  source 'http://downloads.alteryx.com/Alteryx11.0.3.25674/RInstaller_11.0.3.25674.exe'
+  version '3.3.2'
 end
 ```
 ```ruby
@@ -362,4 +362,3 @@ This software is licensed under the Apache 2 license, quoted below.
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
