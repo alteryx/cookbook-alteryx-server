@@ -1,3 +1,5 @@
+require 'mixlib/shellout'
+
 property :source, [String, nil], default: nil
 property :version, [String, nil], default: nil
 
@@ -26,9 +28,28 @@ action :install do
   pkg_name = "Alteryx Predictive Tools with R #{version}"
   pkg_source = source
 
-  package pkg_name do
-    source pkg_source
-    options '/s'
-    action :install
+  # for chef-client 13 and later, use the Chef package resource
+  # for chef-client earlier than 13, use the Chef windows_package resource
+  # chef_version = `chef-client --version`
+
+  # find the chef-client version
+  get_chef_version = Mixlib::ShellOut.new('chef-client --version')
+  get_chef_version.run_command
+  base_chef_version = get_chef_version.stdout.split(':')[1].strip
+
+  # run the appropriate resource
+  if base_chef_version < '13'
+    windows_package pkg_name do
+      source pkg_source
+      installer_type :custom
+      options '/s'
+      action :install
+    end
+  else
+    package pkg_name do
+      source pkg_source
+      options '/s'
+      action :install
+    end
   end
 end
