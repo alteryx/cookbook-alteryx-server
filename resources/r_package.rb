@@ -31,12 +31,9 @@ action :install do
   # chef_version = `chef-client --version`
 
   # find the chef-client version
-  get_chef_version = Mixlib::ShellOut.new('chef-client --version')
-  get_chef_version.run_command
-  base_chef_version = get_chef_version.stdout.split(':')[1].strip
-
+  chef_client_version = node['chef_packages']['chef']['version']
   # run the appropriate resource
-  if base_chef_version < '13'
+  if chef_client_version < '13'
     windows_package pkg_name do
       source pkg_source
       installer_type :custom
