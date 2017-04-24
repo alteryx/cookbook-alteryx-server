@@ -100,11 +100,10 @@ describe 'alteryx-server::default' do
       runner.converge(described_recipe)
     end
 
-     it 'Installs R Predictive Tools chef-client v13' do
+    it 'Installs R Predictive Tools chef-client v13' do
       expect(chef_run).to install_package(
         'Alteryx Predictive Tools with R 3.2.3'
       )
     end
   end
 end
-
