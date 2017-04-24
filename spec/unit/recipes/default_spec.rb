@@ -44,10 +44,23 @@ describe 'alteryx-server::default' do
       expect(chef_run).to install_alteryx_server_package('Alteryx Server')
     end
 
-    it 'Installs R Predictive Tools' do
-      expect(chef_run).to install_package(
-        'Alteryx Predictive Tools with R 3.2.3'
-      )
+    # find the chef-client version
+    get_chef_version = Mixlib::ShellOut.new('chef-client --version')
+    get_chef_version.run_command
+    base_chef_version = get_chef_version.stdout.split(':')[1].strip
+    # run the appropriate resource
+    if base_chef_version < '13'
+      it 'Installs R Predictive Tools' do
+        expect(chef_run).to install_windows_package(
+          'Alteryx Predictive Tools with R 3.2.3'
+        )
+      end
+    else
+      it 'Installs R Predictive Tools' do
+        expect(chef_run).to install_package(
+          'Alteryx Predictive Tools with R 3.2.3'
+        )
+      end
     end
 
     it 'Sends the install action to alteryx_server_r_package' do
