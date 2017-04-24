@@ -28,7 +28,6 @@ action :install do
 
   # for chef-client 13 and later, use the Chef package resource
   # for chef-client earlier than 13, use the Chef windows_package resource
-  # chef_version = `chef-client --version`
 
   # find the chef-client version
   chef_client_version = node['chef_packages']['chef']['version']

@@ -84,7 +84,7 @@ describe 'alteryx-server::default' do
 end
 
 describe 'alteryx-server::default' do
-  context 'When chef-clint is 13' do
+  context 'When chef-client is 13' do
     RTS_OVERRIDES_PATH = './spec/unit/files/'\
                          'RuntimeSettings-overrides.xml'.freeze
     let(:chef_run) do
