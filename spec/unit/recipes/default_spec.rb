@@ -46,7 +46,6 @@ describe 'alteryx-server::default' do
     end
 
     it 'Installs R Predictive Tools chef-client v12' do
-      chef_run.node.set['chef_packages']['chef']['version'] = 12
       expect(chef_run).to install_windows_package(
         'Alteryx Predictive Tools with R 3.2.3'
       )
