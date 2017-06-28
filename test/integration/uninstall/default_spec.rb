@@ -1,4 +1,4 @@
-describe package('Alteryx 11.0 x64') do
+describe package('Alteryx 11.3 x64') do
   it { should_not be_installed }
 end
 
