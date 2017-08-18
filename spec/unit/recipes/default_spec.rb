@@ -38,7 +38,7 @@ describe 'alteryx-server::default' do
     end
 
     it 'Installs Alteryx Server' do
-      expect(chef_run).to install_package('Alteryx 11.3 x64')
+      expect(chef_run).to install_package('Alteryx 11.5 x64')
     end
 
     it 'Sends the install action to alteryx_server_package' do

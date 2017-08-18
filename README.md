@@ -40,7 +40,7 @@ Install Alteryx Server.
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
 |source|String|`node['alteryx']['source'] = nil`  |**Optional**: Local path or URL<br/>The installer will download from alteryx.com using `version` unless `source` is specified.|
-|version|String|`node['alteryx']['version'] = '11.3.2.29874'`|**Required**: Full version string (11.3.2.29874, for example)|
+|version|String|`node['alteryx']['version'] = '11.5.1.31573'`|**Required**: Full version string (11.5.1.31573, for example)|
 
 #### Examples:
 
@@ -52,8 +52,8 @@ alteryx_server_package 'Alteryx Server'
 ```ruby
 # Install specified version of Alteryx Server
 alteryx_server_package 'Alteryx Server' do
-  source 'http://downloads.alteryx.com/Alteryx11.3.2.29874/AlteryxServerInstallx64_11.3.2.29874.exe'
-  version '11.3.2.29874'
+  source 'http://downloads.alteryx.com/Alteryx11.5.1.31573/AlteryxServerInstallx64_11.5.1.31573.exe'
+  version '11.5.1.31573'
 end
 ```
 ```ruby
@@ -173,7 +173,7 @@ alteryx_server_r_package 'R Predictive Tools'
 ```ruby
 # Install specified version of R Prodictive Tools
 alteryx_server_r_package 'R Predictive Tools' do
-  source 'http://downloads.alteryx.com/Alteryx11.3.2.29874/RInstaller_11.3.2.29874.exe'
+  source 'http://downloads.alteryx.com/Alteryx11.5.1.31573/RInstaller_11.5.1.31573.exe'
   version '3.3.2'
 end
 ```

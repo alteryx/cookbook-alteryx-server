@@ -1,6 +1,6 @@
-describe package('Alteryx 11.3 x64') do
+describe package('Alteryx 11.5 x64') do
   it { should be_installed }
-  its('version') { should eq '11.3.2.29874' }
+  its('version') { should eq '11.5.2.29874' }
 end
 
 describe package('Alteryx Predictive Tools with R 3.3.2') do
