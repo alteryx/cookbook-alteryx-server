@@ -1,5 +1,6 @@
 default['alteryx'] = {}
 default['alteryx']['install_timeout'] = 3600
+default['alteryx']['r_install_timeout'] = default['alteryx']['install_timeout']
 default['alteryx']['license'] = {}
 default['alteryx']['force_secrets_update'] = nil
 default['alteryx']['r_source'] = nil
