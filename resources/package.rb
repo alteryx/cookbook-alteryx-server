@@ -19,6 +19,7 @@ action :install do
     source pkg_source
     options '/s'
     version pkg_version
+    timeout node['alteryx']['install_timeout']
     action :install
   end
 end

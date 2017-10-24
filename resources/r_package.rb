@@ -37,12 +37,14 @@ action :install do
       source pkg_source
       installer_type :custom
       options '/s'
+      timeout node['alteryx']['r_install_timeout']
       action :install
     end
   else
     package pkg_name do
       source pkg_source
       options '/s'
+      timeout node['alteryx']['r_install_timeout']
       action :install
     end
   end
