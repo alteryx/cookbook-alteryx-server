@@ -1,5 +1,6 @@
 property :source, [String, nil], default: nil
 property :version, [String, nil], default: nil
+property :timeout, [String, Fixnum]
 
 default_action :install
 
@@ -20,33 +21,20 @@ load_current_value do
 
   version node['alteryx']['r_version'] unless version
   version local_r_version unless version
+  timeout node['alteryx']['r_installer_timeout'] unless timeout
 end
 
 action :install do
   pkg_name = "Alteryx Predictive Tools with R #{version}"
   pkg_source = source
+  pkg_timeout = timeout
 
-  # for chef-client 13 and later, use the Chef package resource
-  # for chef-client earlier than 13, use the Chef windows_package resource
-
-  # find the chef-client version
-  chef_client_version = node['chef_packages']['chef']['version']
-  # run the appropriate resource
-  if chef_client_version < '13'
-    windows_package pkg_name do
-      source pkg_source
-      installer_type :custom
-      options '/s'
-      timeout node['alteryx']['r_install_timeout']
-      action :install
-    end
-  else
-    package pkg_name do
-      source pkg_source
-      options '/s'
-      timeout node['alteryx']['r_install_timeout']
-      action :install
-    end
+  windows_package pkg_name do
+    source pkg_source
+    installer_type :custom
+    options '/s'
+    timeout pkg_timeout
+    action :install
   end
 end
 

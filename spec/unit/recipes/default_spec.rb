@@ -82,27 +82,3 @@ describe 'alteryx-server::default' do
     end
   end
 end
-
-describe 'alteryx-server::default' do
-  context 'When chef-client is 13' do
-    RTS_OVERRIDES_PATH = './spec/unit/files/'\
-                         'RuntimeSettings-overrides.xml'.freeze
-    let(:chef_run) do
-      lwrps = %w(alteryx_server_r_package)
-      runner = ChefSpec::SoloRunner.new(
-        platform: 'windows',
-        version: '2012R2',
-        step_into: lwrps) do |node|
-          node.automatic['chef_packages']['chef']['version'] = '13'
-          node.set['alteryx']['r_version'] = '3.2.3'
-        end
-      runner.converge(described_recipe)
-    end
-
-    it 'Installs R Predictive Tools chef-client v13' do
-      expect(chef_run).to install_package(
-        'Alteryx Predictive Tools with R 3.2.3'
-      )
-    end
-  end
-end

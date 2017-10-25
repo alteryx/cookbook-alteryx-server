@@ -1,5 +1,6 @@
 property :source, String
 property :version, String
+property :timeout, [String, Fixnum]
 
 default_action :install
 
@@ -8,18 +9,20 @@ load_current_value do
 
   source node['alteryx']['source'] if node['alteryx']['source'] && source.nil?
   source AlteryxServer::Helpers.server_link(version) unless source
+  timeout node['alteryx']['installer_timeout'] unless timeout
 end
 
 action :install do
   package_name = AlteryxServer::Helpers.package_name(version)
   pkg_source = source
   pkg_version = version
+  pkg_timeout = timeout
 
   package package_name do
     source pkg_source
     options '/s'
     version pkg_version
-    timeout node['alteryx']['install_timeout']
+    timeout pkg_timeout
     action :install
   end
 end
