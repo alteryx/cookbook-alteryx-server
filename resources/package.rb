@@ -4,6 +4,14 @@ property :timeout, [String, Fixnum]
 
 default_action :install
 
+def package_name
+  script = 'powershell "(Get-ItemProperty HKLM:\\\\Software\\\\Microsoft\\\\'\
+    'Windows\\\\CurrentVersion\\\\Uninstall\\\\* |  Select-Object DisplayName,'\
+    'Publisher |  Where-Object {$_.Publisher -like \'Alteryx\'}).DisplayName'
+  package_name = shell_out(script).stdout.strip
+  package_name.empty? ? 'Alteryx' : package_name
+end
+
 load_current_value do
   version node['alteryx']['version'] unless version
 
@@ -13,12 +21,12 @@ load_current_value do
 end
 
 action :install do
-  package_name = AlteryxServer::Helpers.package_name(version)
+  pkg_name = package_name
   pkg_source = source
   pkg_version = version
   pkg_timeout = timeout
 
-  package package_name do
+  package pkg_name do
     source pkg_source
     options '/s'
     version pkg_version

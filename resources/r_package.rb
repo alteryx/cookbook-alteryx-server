@@ -12,6 +12,16 @@ def local_r_version
   shell_out(script).stdout.strip
 end
 
+# R Development Core Team
+def package_name
+  script = 'powershell "(Get-ItemProperty HKLM:\\\\Software\\\\Microsoft\\\\'\
+    'Windows\\\\CurrentVersion\\\\Uninstall\\\\* |  Select-Object DisplayName,'\
+    'Publisher |  Where-Object {$_.Publisher -like '\
+    '\'R Development Core Team\'}).DisplayName'
+  package_name = shell_out(script).stdout.strip
+  package_name.empty? ? 'AlteryxRTools' : package_name
+end
+
 load_current_value do
   r_source_attr = node['alteryx']['r_source']
   helpers = AlteryxServer::Helpers
@@ -25,7 +35,7 @@ load_current_value do
 end
 
 action :install do
-  pkg_name = "Alteryx Predictive Tools with R #{version}"
+  pkg_name = package_name
   pkg_source = source
   pkg_timeout = timeout
 
