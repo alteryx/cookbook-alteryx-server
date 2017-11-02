@@ -8,7 +8,7 @@ default['alteryx']['r_source'] = nil
 default['alteryx']['r_version'] = nil
 default['alteryx']['restart_on_change'] = false
 default['alteryx']['source'] = nil
-default['alteryx']['version'] = '11.5.1.31573'
+default['alteryx']['version'] = '11.5.1.35081'
 default['alteryx']['runtimesettings']['engine']['num_threads'] =
   node['cpu']['total'] + 1
 default['alteryx']['runtimesettings']['engine']['sort_join_memory'] =
