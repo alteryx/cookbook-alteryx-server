@@ -21,10 +21,10 @@ end
 
 describe '#server_link' do
   it 'Should return an expected link' do
-    expect(helpers.server_link('11.5.1.35081')).to(
+    expect(helpers.server_link('11.7.4.37815')).to(
       eq(
-        'http://downloads.alteryx.com/Alteryx11.5.1.35081/'\
-        'AlteryxServerInstallx64_11.5.1.35081.exe'
+        'http://downloads.alteryx.com/Alteryx11.7.4.37815/'\
+        'AlteryxServerInstallx64_11.7.4.37815.exe'
       )
     )
   end
@@ -32,7 +32,7 @@ end
 
 describe '#package_name' do
   it 'Should give an expected package name' do
-    expect(helpers.package_name('11.5.1.35081')).to eq('Alteryx 11.5 x64')
+    expect(helpers.package_name('11.7.4.37815')).to eq('Alteryx 11.7 x64')
   end
 end
 
