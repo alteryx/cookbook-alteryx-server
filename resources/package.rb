@@ -1,5 +1,6 @@
 property :source, String
 property :version, String
+property :options, String
 property :timeout, [String, Fixnum]
 
 default_action :install
@@ -18,6 +19,7 @@ load_current_value do
   source node['alteryx']['source'] if node['alteryx']['source'] && source.nil?
   source AlteryxServer::Helpers.server_link(version) unless source
   timeout node['alteryx']['installer_timeout'] unless timeout
+  options '/s' unless options
 end
 
 action :install do
@@ -25,10 +27,16 @@ action :install do
   pkg_source = source
   pkg_version = version
   pkg_timeout = timeout
+  pkg_options = options
+
+  # Allow custom options but make sure the silent flag is in the options list
+  unless pkg_options =~ /\/s/
+    pkg_options =+ ' /s'
+  end
 
   package pkg_name do
     source pkg_source
-    options '/s'
+    options pkg_options
     version pkg_version
     timeout pkg_timeout
     action :install
