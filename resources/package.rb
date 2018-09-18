@@ -30,9 +30,7 @@ action :install do
   pkg_options = options
 
   # Allow custom options but make sure the silent flag is in the options list
-  unless pkg_options =~ /\/s/
-    pkg_options =+ ' /s'
-  end
+  pkg_options += ' /s' unless pkg_options.include?('s/')
 
   package pkg_name do
     source pkg_source
