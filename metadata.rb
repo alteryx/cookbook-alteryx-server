@@ -6,6 +6,6 @@ description      'Installs/Configures Alteryx server'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.13.10'
 supports         'windows'
-chef_version     '~> 12'
+chef_version     '>= 12.7.2'
 source_url       'https://github.com/alteryx/cookbook-alteryx-server'
 issues_url       'https://github.com/alteryx/cookbook-alteryx-server/issues'
