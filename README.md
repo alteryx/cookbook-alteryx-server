@@ -39,7 +39,9 @@ Install Alteryx Server.
 #### Attributes
 |Name  |Type  |Default|Description|
 |------|------|-------|-----------|
+|options|String|`/s`|**Optional**: Flags to pass to the installer. `/s` will be added if not present.|
 |source|String|`node['alteryx']['source'] = nil`  |**Optional**: Local path or URL<br/>The installer will download from alteryx.com using `version` unless `source` is specified.|
+|timeout|String/Integer (sec)|`node['alteryx']['installer_timeout'] = 3600`|**Optional**: Timeout for the package installer in seconds.|
 |version|String|`node['alteryx']['version'] = '11.7.4.37815'`|**Required**: Full version string (11.7.4.37815, for example)|
 
 #### Examples:
