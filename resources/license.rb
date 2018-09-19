@@ -1,4 +1,4 @@
-property :license, String, name_property: true, required: true
+property :license, String, name_property: true
 property :email, String
 property :skip, [TrueClass, FalseClass]
 
